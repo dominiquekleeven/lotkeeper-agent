@@ -26,6 +26,7 @@ services:
       - WINEESYNC=1
       - WINEFSYNC=1
       - WOW_EXE=Ascension.exe
+      - VNC_PASSWORD=password
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm
@@ -42,6 +43,7 @@ services:
 # Volume for client data (external)
 # Client data should be mounted here from the host machine, make sure to create the volume first
 # Example CMD Windows: docker run --rm -v client_data:/data -v "C:\wotlk:/source" alpine sh -c "cp -r /source/* /data/"
+# docker run --rm -v client_data:/data alpine chown -R 1010:1010 /data to make sure the volume is owned by the wineuser
 volumes:
   client_data:
     external: true
