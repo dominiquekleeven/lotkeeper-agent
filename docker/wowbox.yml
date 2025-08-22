@@ -27,6 +27,10 @@ services:
       - WINEFSYNC=1
       - WOW_EXE=Ascension.exe
       - VNC_PASSWORD=password
+      # Set these in the environment or in the .env file
+      - WOW_USERNAME=${WOW_USERNAME:-}
+      - WOW_PASSWORD=${WOW_PASSWORD:-}
+      - AGENT_MODE=${AGENT_MODE:-false}
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm

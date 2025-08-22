@@ -25,6 +25,7 @@ RUN apt-get update && \
         cabextract \
         p7zip-full \
         winbind \
+        xdotool \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/* /var/tmp/*
@@ -33,10 +34,11 @@ ENV DISPLAY=:99
 ENV LIBGL_ALWAYS_SOFTWARE=1
 ENV GALLIUM_DRIVER=llvmpipe
 ENV MESA_GL_VERSION_OVERRIDE=4.5
-ENV WINEDEBUG=-all
+ENV WINEDEBUG=-all,-dll,-heap,-loaddll,-fixme
 ENV WINEDLLOVERRIDES="mscoree,mshtml="
 ENV WINEARCH=win64
 ENV WINEPREFIX=/home/wineuser/.wine
+ENV WINE_LARGE_ADDRESS_AWARE=1
 ENV MESA_NO_ERROR=1
 ENV MESA_GLTHREAD=true
 ENV __GL_THREADED_OPTIMIZATIONS=1
@@ -46,7 +48,18 @@ ENV LP_NUM_THREADS=2
 ENV WINEESYNC=1
 ENV WINEFSYNC=1
 
+# Copy the Python project
+COPY pyproject.toml uv.lock /app/
+COPY src/ /app/src/
+
+# Set up Python project structure and fix permissions
+WORKDIR /app
+RUN chown -R 1010:1010 /app
+
 # Copy and make the startup script executable
 COPY docker/startup.sh /startup.sh
 RUN chmod +x /startup.sh
+
+# Set back to data directory as working directory
+WORKDIR /data
 

@@ -50,9 +50,30 @@ ls -la | head -10
 # Check if the executable exists
 if [ -f "$WOW_EXECUTABLE" ]; then
     echo "Found $WOW_EXECUTABLE, starting game..."
-    WINEDEBUG=-all WINEPREFIX=/home/wineuser/.wine wine "$WOW_EXECUTABLE" &
+    WINEDEBUG=-all WINEPREFIX=/home/wineuser/.wine wine "$WOW_EXECUTABLE" >/dev/null 2>&1 &
     WINE_PID=$!
     echo "Wine started with PID: $WINE_PID"
+
+    # Check if auto-login is enabled
+    if [ "$AGENT_MODE" = "true" ]; then
+        echo "Installing UV and running agent in background..."
+        (
+            # Install UV if not already installed
+            if ! command -v uv &> /dev/null; then
+                echo "Installing UV..."
+                curl -LsSf https://astral.sh/uv/0.8.13/install.sh | sh
+                export PATH="$HOME/.local/bin:$PATH"
+            fi
+            
+            cd /app
+            echo "Syncing Python dependencies..."
+            ~/.local/bin/uv sync
+            echo "Starting open-ah-agent..."
+            ~/.local/bin/uv run python -m open_ah_agent.main
+        ) &
+        AUTOMATION_PID=$!
+        echo "Automation started with PID: $AUTOMATION_PID"
+    fi
 else
     echo "ERROR: $WOW_EXECUTABLE not found in /data"
     echo "Available files in /data:"
