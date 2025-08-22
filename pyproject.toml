@@ -1,0 +1,92 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "open-ah-agent"
+version = "1.0.0"
+description = "Open AH Agent"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "apscheduler>=3.11.0",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.1",
+    "loguru>=0.7.3",
+]
+
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-cov>=6.0.0",
+    "mypy>=1.15.0",
+    "ruff>=0.11.0",
+    "build>=1.2.2",
+    "respx>=0.22.0",
+]
+
+
+[tool.setuptools]
+packages = ["open_ah_agent"]
+package-dir = { "open_ah_agent" = "src/open_ah_agent" }
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+fix = true
+unsafe-fixes = false
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C90", # mccabe complexity
+    "PD",  # pandas-vet
+    "PGH", # pygrep-hooks
+    "PL",  # pylint
+    "RUF", # ruff-specific rules
+]
+ignore = ["PLR0913", "B008", "C901", "PLR0912"]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+line-ending = "auto"
+quote-style = "double"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+indent-style = "space"
+
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+strict = true
+ignore_missing_imports = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["open_ah_agent"]
+combine-as-imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+filterwarnings = ["ignore:.*"]
