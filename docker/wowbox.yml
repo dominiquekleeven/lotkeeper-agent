@@ -1,0 +1,47 @@
+# wowbox.yml
+# Uses a custom Dockerfile to allow running World of Warcraft in a docker container
+# We use docker compose for management mainly and setting sensible defaults
+
+services:
+  wowbox:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    platform: linux/amd64
+    container_name: wowbox
+    # Configure environment
+    environment:
+      - WINEDEBUG=-all
+      - DISPLAY=:99
+      - LIBGL_ALWAYS_SOFTWARE=1
+      - GALLIUM_DRIVER=llvmpipe
+      - WINEDLLOVERRIDES=mscoree,mshtml=
+      - __GL_SYNC_TO_VBLANK=0
+      - MESA_NO_ERROR=1
+      - MESA_GLTHREAD=true
+      - __GL_THREADED_OPTIMIZATIONS=1
+      - MESA_GL_VERSION_OVERRIDE=4.5
+      - MESA_GLSL_VERSION_OVERRIDE=450
+      - LP_NUM_THREADS=2
+      - WINEESYNC=1
+      - WINEFSYNC=1
+      - WOW_EXE=Ascension.exe
+    volumes:
+      - client_data:/data:rw
+      - /dev/shm:/dev/shm
+    ports:
+      - "5900:5900"   # VNC
+      - "6080:6080"   # noVNC (web)
+    shm_size: "1gb"
+    mem_limit: "4g"
+    cpus: "2"
+    restart: unless-stopped
+    command: /startup.sh
+
+
+# Volume for client data (external)
+# Client data should be mounted here from the host machine, make sure to create the volume first
+# Example CMD Windows: docker run --rm -v client_data:/data -v "C:\wotlk:/source" alpine sh -c "cp -r /source/* /data/"
+volumes:
+  client_data:
+    external: true
