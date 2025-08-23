@@ -9,12 +9,15 @@ class AppEnvironment(BaseSettings):
     # --- Agent ---
     OAH_AGENT_TOKEN: str = DEFAULT_AGENT_TOKEN
 
-    # Starts doing agent tasks
-    AGENT_MODE: bool = False
+    # Automatically run tasks
+    IDLE_MODE: bool = True
 
     # --- Credentials ---
     WOW_USERNAME: str = ""
     WOW_PASSWORD: str = ""
+
+    # --- Discord ---
+    DISCORD_WEBHOOK_URL: str = ""
 
 
 ENV = AppEnvironment()

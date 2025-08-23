@@ -26,6 +26,11 @@ RUN apt-get update && \
         p7zip-full \
         winbind \
         xdotool \
+        tesseract-ocr \
+        tesseract-ocr-eng \
+        python3 \
+        python3-pip \
+        python3-venv \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/* /var/tmp/*
@@ -62,4 +67,3 @@ RUN chmod +x /startup.sh
 
 # Set back to data directory as working directory
 WORKDIR /data
-

@@ -30,7 +30,8 @@ services:
       # Set these in the environment or in the .env file
       - WOW_USERNAME=${WOW_USERNAME:-}
       - WOW_PASSWORD=${WOW_PASSWORD:-}
-      - AGENT_MODE=${AGENT_MODE:-false}
+      - IDLE_MODE=${IDLE_MODE:-true}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm

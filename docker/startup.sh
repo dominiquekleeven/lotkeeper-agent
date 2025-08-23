@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor 2>/dev/null || true
+echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor >/dev/null 2>&1 || true
 
-Xvfb :99 -screen 0 1024x768x16 -ac +extension GLX +render -noreset -nolisten tcp -dpi 96 +extension DAMAGE -fbdir /dev/shm -maxclients 256 &
+Xvfb :99 -screen 0 1024x768x24 -ac +extension GLX +render -noreset -nolisten tcp -dpi 96 +extension DAMAGE -fbdir /dev/shm -maxclients 256 &
 sleep 1
 
 fluxbox -rc /dev/null &
@@ -40,44 +40,18 @@ echo "Starting noVNC web interface on port 6080..."
 websockify --web=/usr/share/novnc/ 6080 localhost:5900 &
 sleep 1
 
-cd /data
-WOW_EXECUTABLE=${WOW_EXE:-WoW.exe}
-echo "Starting $WOW_EXECUTABLE..."
-echo "Current directory: $(pwd)"
-echo "Available files:"
-ls -la | head -10
-
-# Check if the executable exists
-if [ -f "$WOW_EXECUTABLE" ]; then
-    echo "Found $WOW_EXECUTABLE, starting game..."
-    WINEDEBUG=-all WINEPREFIX=/home/wineuser/.wine wine "$WOW_EXECUTABLE" >/dev/null 2>&1 &
-    WINE_PID=$!
-    echo "Wine started with PID: $WINE_PID"
-
-    # Check if auto-login is enabled
-    if [ "$AGENT_MODE" = "true" ]; then
-        echo "Installing UV and running agent in background..."
-        (
-            # Install UV if not already installed
-            if ! command -v uv &> /dev/null; then
-                echo "Installing UV..."
-                curl -LsSf https://astral.sh/uv/0.8.13/install.sh | sh
-                export PATH="$HOME/.local/bin:$PATH"
-            fi
-            
-            cd /app
-            echo "Syncing Python dependencies..."
-            ~/.local/bin/uv sync
-            echo "Starting open-ah-agent..."
-            ~/.local/bin/uv run python -m open_ah_agent.main
-        ) &
-        AUTOMATION_PID=$!
-        echo "Automation started with PID: $AUTOMATION_PID"
-    fi
-else
-    echo "ERROR: $WOW_EXECUTABLE not found in /data"
-    echo "Available files in /data:"
-    ls -la /data
+# Prepare to start the Python application
+# Install UV if not already installed
+if ! command -v uv &> /dev/null; then
+    echo "Installing UV..."
+    curl -LsSf https://astral.sh/uv/0.8.13/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
 fi
+
+cd /app
+echo "Syncing Python dependencies..."
+~/.local/bin/uv sync
+echo "Starting open-ah-agent (which will start WoW)..."
+~/.local/bin/uv run python -m open_ah_agent.main
 
 wait
