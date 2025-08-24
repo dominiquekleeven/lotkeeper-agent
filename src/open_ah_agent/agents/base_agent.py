@@ -56,7 +56,7 @@ class BaseAgent(ABC):
             logger.error(f"A task error occurred while running tasks: {e}")
             discord_logger.agent_task_failed(self.name, e.task_name, str(e))
         except Exception as e:
-            logger.error(f"An unexpected error occurred while running tasks: {e}")
+            logger.exception(f"An unexpected error occurred while running tasks: {e}")
             discord_logger.agent_error(self.name, str(e))
         finally:
             self.teardown()

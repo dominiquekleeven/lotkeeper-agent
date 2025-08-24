@@ -58,11 +58,13 @@ class ScanAuctionsTask(AgentTask):
             logger.info(f"Successfully parsed auction data with {len(table_entries)} entries")
             auctions = [Auction.from_lua_table(entry) for entry in table_entries]
             logger.info(f"Successfully mapped {len(auctions)} auctions")
-
-            discord_logger.info(f"Successfully parsed and mapped {len(auctions)} auctions", "Auction House Scan")
         except Exception as e:
+            logger.exception(f"Failed to parse saved variables file: {e}")
             raise TaskError(self.name, f"Failed to parse saved variables file: {e}") from e
 
+        discord_logger.info(
+            f"Successfully parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update"
+        )
 
         # 9 Send the auctions to the OpenAH API
         # TODO: Implement

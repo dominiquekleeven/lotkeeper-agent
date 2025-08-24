@@ -14,18 +14,36 @@ scrape_configs:
         refresh_interval: 10s
 
     relabel_configs:
-      - source_labels: [__meta_docker_container_name]
-        regex: /wowbox$
+      # Only scrape containers you explicitly label
+      - source_labels: [__meta_docker_container_label_logging]
+        regex: promtail
         action: keep
 
+      # Always have at least one label (avoids 400 from Loki)
+      - target_label: job
+        replacement: wowbox
+
+      # Agent label from container
+      - source_labels: [__meta_docker_container_label_agent]
+        target_label: agent
+
+      # Container name (without leading slash) — handy for debugging
       - source_labels: [__meta_docker_container_name]
+        regex: '/(.*)'
         target_label: container
-      - source_labels: [__meta_docker_container_image]
-        target_label: image
-      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
-        target_label: compose_service
-      - source_labels: [__meta_docker_container_label_com_docker_compose_project]
-        target_label: compose_project
 
     pipeline_stages:
       - docker: {}
+
+      # Parse Loguru-style prefix:
+      # 2025-08-24 18:02:36.039 | INFO     | open_...:... - <message>
+      - regex:
+          expression: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+\|\s+(?P<level>[A-Z]+)\s+\|\s+(?P<logger>[^:]+):(?P<message>.*)$'
+
+      # Promote the parsed level to a Loki label
+      - labels:
+          level:
+
+      # Keep only the message text as the log line content
+      - output:
+          source: message

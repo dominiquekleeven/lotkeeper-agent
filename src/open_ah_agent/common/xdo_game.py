@@ -3,8 +3,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from loguru import logger
 import lupa
+from loguru import logger
 
 from open_ah_agent.common.xdo import XDO
 from open_ah_agent.config import ENV
@@ -96,7 +96,7 @@ class XDOGame:
             lua = lupa.LuaRuntime(unpack_returned_tuples=True)
 
             # Load file contents
-            with open(saved_variables_path, "r", encoding="utf-8") as f:
+            with open(saved_variables_path, encoding="utf-8") as f:
                 lua_code = f.read()
 
             # Execute Lua code (defines the global tables)
@@ -110,7 +110,7 @@ class XDOGame:
                 if lupa.lua_type(obj) == "table":
                     # Decide list vs dict
                     keys = list(obj.keys())
-                    if all(isinstance(k, (int, float)) for k in keys):
+                    if all(isinstance(k, int | float) for k in keys):
                         return [lua_to_python(obj[k]) for k in sorted(keys)]
                     else:
                         return {k: lua_to_python(v) for k, v in obj.items()}
@@ -149,7 +149,7 @@ class XDOGame:
                 logger.info(f"Wine started with PID: {process.pid}")
                 return process
             except Exception as e:
-                logger.error(f"Failed to start WoW: {e}")
+                logger.exception(f"Failed to start WoW: {e}")
                 return None
 
         @staticmethod

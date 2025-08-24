@@ -170,7 +170,7 @@ class DiscordLogger:
                 return False
 
         except Exception as e:
-            logger.error(f"Error sending Discord snapshot: {e}")
+            logger.exception(f"Error sending Discord snapshot: {e}")
             return False
 
 

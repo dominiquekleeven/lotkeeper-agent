@@ -1,15 +1,9 @@
-# wowbox.yml
-# Uses a custom Dockerfile to allow running World of Warcraft in a docker container
-# We use docker compose for management mainly and setting sensible defaults
-
 services:
   wowbox:
     build:
       context: ../../
       dockerfile: deployment/docker/Dockerfile
     platform: linux/amd64
-    container_name: wowbox
-    # Configure environment
     environment:
       - WINEDEBUG=-all
       - DISPLAY=:99
@@ -25,35 +19,43 @@ services:
       - LP_NUM_THREADS=2
       - WINEESYNC=1
       - WINEFSYNC=1
-      - WOW_EXE=Ascension.exe
-      - VNC_PASSWORD=password
-      # Set these in the environment or in the .env file
-      - WOW_USERNAME=${WOW_USERNAME:-}
-      - WOW_PASSWORD=${WOW_PASSWORD:-}
-      - WOW_SERVER=${WOW_SERVER:-}
-      - WOW_REALM=${WOW_REALM:-}
+      - WOW_EXE=${WOW_EXE:?must be set}
+      - VNC_PASSWORD=${VNC_PASSWORD:?must be set}
+      - WOW_USERNAME=${WOW_USERNAME:?must be set}
+      - WOW_PASSWORD=${WOW_PASSWORD:?must be set}
+      - WOW_SERVER=${WOW_SERVER:?must be set}
+      - WOW_REALM=${WOW_REALM:?must be set}
       - AGENT_MODE=${AGENT_MODE:-MANUAL}
-      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
-      - AGENT_NAME=${AGENT_NAME:-}
-      - AGENT_IMAGE_URL=${AGENT_IMAGE_URL:-}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:?must be set}
+      - AGENT_NAME=${AGENT_NAME:?must be set}
+      - AGENT_IMAGE_URL=${AGENT_IMAGE_URL:?must be set}
+    labels:
+    - logging=promtail
+    - agent=${AGENT_NAME:?must be set}
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm
     ports:
-      - "5900:5900"   # VNC
-      - "6080:6080"   # noVNC (web)
+      - "5901:5900"
+      - "6081:6080"
     shm_size: "1gb"
     mem_limit: "4g"
     cpus: "2"
     restart: unless-stopped
     command: /startup.sh
 
-# Volume for client data
-# Copy client data via: python copy_client.py
-# You will be prompted to select a client, once started it'll re-create the volume.
-# ----------------------
-# Copy addons via: python copy_addon.py
-# You will be prompted to an addon, all this does is copy to the volume
+  promtail:
+    image: grafana/promtail:2.9.8
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true
+    environment:
+      - LOKI_URL=${LOKI_URL}
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /tmp:/tmp
+    restart: unless-stopped
+
 
 volumes:
   client_data:

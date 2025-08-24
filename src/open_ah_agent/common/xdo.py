@@ -29,7 +29,7 @@ class XDO:
             logger.error("xdotool command timed out")
             return False
         except Exception as e:
-            logger.error(f"Failed to run xdotool: {e}")
+            logger.exception(f"Failed to run xdotool: {e}")
             return False
 
     class Window:
@@ -91,7 +91,7 @@ class XDO:
                 except subprocess.TimeoutExpired:
                     continue
                 except Exception as e:
-                    logger.warning(f"Error trying pattern '{pattern}': {e}")
+                    logger.exception(f"Error trying pattern '{pattern}': {e}")
                     continue
 
             logger.error("Could not find WoW window")
