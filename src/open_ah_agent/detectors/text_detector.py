@@ -28,6 +28,7 @@ class DetectionResult:
     success: bool
     annotated_frame: numpy.ndarray | None
 
+
 class TextDetector:
     def __init__(
         self,
@@ -266,10 +267,6 @@ class TextDetector:
                     return True
         return False
 
-
-
-
-
     def detect(
         self,
         keywords: list[str],
@@ -300,7 +297,6 @@ class TextDetector:
                     discord_logger.ocr_timeout(result.annotated_frame, keywords, timeout_duration=timeout)
 
         return result.success
-
 
     def detect_absence(
         self,

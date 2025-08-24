@@ -51,7 +51,6 @@ class ScanAuctionsTask(AgentTask):
             )
             raise TaskError(self.name, "Could not find the saved variables file")
 
-
         # 8 Parse the saved variables file
         # TODO: Implement this, the file is .lua and contains a table of all auctions.
         # We need to parse this and then map it to our own data model.

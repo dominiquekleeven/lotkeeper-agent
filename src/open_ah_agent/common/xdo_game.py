@@ -27,11 +27,10 @@ class XDOGame:
             XDO.Interact.press_key("Return")  # Send
             return True
 
-
         @staticmethod
         def reload() -> bool:
             """Reload the game"""
-            
+
             XDOGame.Game.enter_chat_command("/reload")
             return True
 

@@ -55,9 +55,7 @@ class DiscordLogger:
             return False
 
         try:
-            webhook = DiscordWebhook(
-                url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL
-            )
+            webhook = DiscordWebhook(url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL)
             embed = self._format_embed(message, level, title)
             webhook.add_embed(embed)
             response = webhook.execute()
@@ -137,9 +135,7 @@ class DiscordLogger:
             return False
 
         try:
-            webhook = DiscordWebhook(
-                url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL
-            )
+            webhook = DiscordWebhook(url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL)
 
             rgb_image = cv2.cvtColor(snapshot, cv2.COLOR_BGR2RGB)
 
