@@ -30,8 +30,10 @@ services:
       # Set these in the environment or in the .env file
       - WOW_USERNAME=${WOW_USERNAME:-}
       - WOW_PASSWORD=${WOW_PASSWORD:-}
-      - IDLE_MODE=${IDLE_MODE:-true}
+      - AGENT_MODE=${AGENT_MODE:-MANUAL}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+      - AGENT_NAME=${AGENT_NAME:-}
+      - AGENT_IMAGE_URL=${AGENT_IMAGE_URL:-}
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm
@@ -44,11 +46,13 @@ services:
     restart: unless-stopped
     command: /startup.sh
 
+# Volume for client data
+# Copy client data via: python copy_client.py
+# You will be prompted to select a client, once started it'll re-create the volume.
+# ----------------------
+# Copy addons via: python copy_addon.py
+# You will be prompted to an addon, all this does is copy to the volume
 
-# Volume for client data (external)
-# Client data should be mounted here from the host machine, make sure to create the volume first
-# Example CMD Windows: docker run --rm -v client_data:/data -v "C:\wotlk:/source" alpine sh -c "cp -r /source/* /data/"
-# docker run --rm -v client_data:/data alpine chown -R 1010:1010 /data to make sure the volume is owned by the wineuser
 volumes:
   client_data:
     external: true

@@ -1,0 +1,8 @@
+## Interface: 30300
+## Title: Open Auction Scanner
+## Notes: Scans and analyzes auction house data
+## Author: Your Name
+## Version: 1.0.0
+## SavedVariables: OAAData
+
+OpenAuctionScanner.lua

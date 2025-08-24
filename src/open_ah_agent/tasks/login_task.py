@@ -4,7 +4,7 @@ from open_ah_agent.common.xdo import XDO
 from open_ah_agent.config import ENV
 from open_ah_agent.dependencies import text_detector
 from open_ah_agent.detectors.text_detector import GameTexts
-from open_ah_agent.tasks.agent_task import AgentTask, TaskError, TaskErrorText
+from open_ah_agent.tasks.agent_task import AgentTask, TaskError
 
 
 class LoginTask(AgentTask):
@@ -19,16 +19,16 @@ class LoginTask(AgentTask):
         # Pre checks
         if not username or not password:
             logger.warning("WOW_USERNAME or WOW_PASSWORD not set in config")
-            raise TaskError(TaskErrorText.PRECHECK_FAILURE)
+            raise TaskError(self.name, "Agent configuration is missing username or password")
 
         self.username = username
         self.password = password
 
     def run(self) -> bool:
         # 1 Wait for the login button to be detected
-        logger.info("Step: Waiting for login screen")
+        logger.info("Step: Wait for login screen")
         if not self.text_detector.detect([GameTexts.LOGIN]):
-            raise TaskError(TaskErrorText.COULD_NOT_DETECT_TEXT)
+            raise TaskError(self.name, "Failed to detect whether we are on the login screen")
 
         # 2 Log username but only partially, only show first 3 characters
         logger.info(f"Logging in as {self.username[:3]}...")
@@ -39,7 +39,7 @@ class LoginTask(AgentTask):
         XDO.Interact.type_text(self.username)
 
         # 4 Tab to password field
-        logger.info("Step: Tab to password")
+        logger.info("Step: Tab to password field")
         XDO.Interact.press_key("Tab")
 
         # 5 Clear and enter password
@@ -52,9 +52,9 @@ class LoginTask(AgentTask):
         XDO.Interact.press_key("Return")
 
         # 7 Wait for Enter World text to be detected
-        logger.info("Step: Waiting for character selection screen")
+        logger.info("Step: Wait for character selection screen")
         if not self.text_detector.detect([GameTexts.CHARACTER]):
-            raise TaskError(TaskErrorText.COULD_NOT_DETECT_TEXT)
+            raise TaskError(self.name, "Failed to detect whether we are on the character selection screen")
 
         # 8 Press Enter to enter the world
         logger.info("Step: Enter world")

@@ -1,7 +1,6 @@
 import random
 import time
 from abc import ABC, abstractmethod
-from enum import Enum
 
 from loguru import logger
 
@@ -12,17 +11,14 @@ DEFAULT_DELAY: tuple[float, float] = (2, 4)
 
 
 class TaskError(Exception):
-    pass
+    """Exception raised when a task fails"""
 
+    def __init__(self, task_name: str, message: str) -> None:
+        self.task_name = task_name
+        self.message = message
 
-class TaskErrorText(Enum):
-    COULD_NOT_FIND_WINDOW = "Unable to find the WoW window"
-    COULD_NOT_FOCUS_WINDOW = "Unable to focus the WoW window"
-    COULD_NOT_START = "Unable to start the task"
-    COULD_NOT_DETECT_TEXT = "Unable to detect text"
-    PRECHECK_FAILURE = "Pre-check failed, not all requirements were met"
-    UNEXPECTED_ERROR = "An unexpected error occurred"
-    TASK_FAILED = "Task failed"
+    def __str__(self) -> str:
+        return f"{self.task_name}: {self.message}"
 
 
 class TimeUtils:
@@ -65,10 +61,6 @@ class AgentTask(ABC):
     def execute(self) -> bool:
         """Execute the task"""
         logger.info(f"Executing task: {self.name}")
-        try:
-            result = self.run()
-            logger.info(f"Completed task: {self.name}, success: {result}")
-            return result
-        except Exception as e:
-            logger.error(f"Error occurred in task: {self.name}: {e}")
-            return False
+        result = self.run()
+        logger.info(f"Completed task: {self.name}, success: {result}")
+        return result

@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 from typing import Any, cast
 
 import cv2
@@ -16,7 +17,16 @@ class GameTexts:
     CHOOSE_SEARCH_CRITERIA = "Choose search criteria"
     LOGIN = "Login"
     TRADE = "Trade"
+    OAS_IDLE = "OAS IDLE"
+    OAS_SCANNING = "OAS SCANNING"
+    OAS_COMPLETED = "OAS COMPLETED"
+    DISCONNECTED = "Disconnected"
 
+
+@dataclass
+class DetectionResult:
+    success: bool
+    annotated_frame: numpy.ndarray | None
 
 class TextDetector:
     def __init__(
@@ -256,6 +266,10 @@ class TextDetector:
                     return True
         return False
 
+
+
+
+
     def detect(
         self,
         keywords: list[str],
@@ -270,14 +284,57 @@ class TextDetector:
             keywords: List of keywords to look for.
             timeout: Maximum time to wait for a keyword to appear.
             min_conf: Minimum confidence level for a keyword to be considered detected.
-            band: Optional fractional crop of the window.
             whitelist: Optional whitelist of characters to consider.
-
         Returns:
             True if any keyword is detected, False when the timeout is reached.
         """
+        result = self._detect(keywords, timeout, min_conf, whitelist)
+        match result.success:
+            case True:
+                logger.info(f"OCR: Detected {keywords} in the game window")
+                if result.annotated_frame is not None:
+                    discord_logger.ocr_success(result.annotated_frame, keywords)
+            case False:
+                logger.info(f"OCR: Did not detect {keywords} in the game window")
+                if result.annotated_frame is not None:
+                    discord_logger.ocr_timeout(result.annotated_frame, keywords, timeout_duration=timeout)
+
+        return result.success
+
+
+    def detect_absence(
+        self,
+        keywords: list[str],
+        timeout: float = 30.0,
+        min_conf: int = 70,
+        whitelist: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
+    ) -> bool:
+        """
+        Look for the absence of a specific keyword/text in the game window.
+
+        Args:
+            keywords: List of keywords to look for.
+            timeout: Maximum time to wait for a keyword to appear.
+            min_conf: Minimum confidence level for a keyword to be considered detected.
+            whitelist: Optional whitelist of characters to consider.
+        Returns:
+            True if any keyword is detected, False when the timeout is reached.
+        """
+        result = self._detect(keywords, timeout, min_conf, whitelist)
+        # TODO: Handle discord reporting for absence, for now just regular call.
+        return not result.success
+
+    def _detect(
+        self,
+        keywords: list[str],
+        timeout: float = 30.0,
+        min_conf: int = 70,
+        whitelist: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
+    ) -> DetectionResult:
+        """Internal, called by public detect and detect_absence"""
         if not keywords:
-            return False
+            return DetectionResult(success=False, annotated_frame=None)
+
         timeout_threshold = time.time() + timeout
         delay = 1.0 / max(self.fps, 1)
         phrase_kws, single_kws, min_single_kw_len = self._prepare_keywords(keywords)
@@ -293,8 +350,7 @@ class TextDetector:
             # Handle line-level detection first (only if phrase keywords are present)
             if phrase_kws and self._detect_in_lines(data, phrase_kws, min_conf):
                 annotated_frame = self._draw_bounding_boxes(frame, data, phrase_kws)
-                discord_logger.ocr_success(annotated_frame, keywords)
-                return True
+                return DetectionResult(success=True, annotated_frame=annotated_frame)
 
             # Word-level detection (only if single keywords are present)
             if single_kws:
@@ -305,8 +361,7 @@ class TextDetector:
 
                 if self._detect_in_words(words, single_kws, min_conf, min_single_kw_len):
                     annotated_frame = self._draw_bounding_boxes(frame, data, single_kws)
-                    discord_logger.ocr_success(annotated_frame, keywords)
-                    return True
+                    return DetectionResult(success=True, annotated_frame=annotated_frame)
 
             time.sleep(delay)
 
@@ -314,6 +369,6 @@ class TextDetector:
         if frame is not None:
             final_data = self._ocr_data(frame, whitelist=whitelist)
             annotated_frame = self._draw_bounding_boxes(frame, final_data)
-            discord_logger.ocr_timeout(annotated_frame, keywords, timeout)
+            return DetectionResult(success=False, annotated_frame=annotated_frame)
 
-        return False
+        return DetectionResult(success=False, annotated_frame=None)

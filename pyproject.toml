@@ -58,7 +58,7 @@ select = [
     "PL",  # pylint
     "RUF", # ruff-specific rules
 ]
-ignore = ["PLR0913", "B008", "C901", "PLR0912", "E501"]
+ignore = ["PLR0913", "B008", "C901", "PLR0912", "E501", "PLR0915"]
 fixable = ["ALL"]
 
 [tool.ruff.format]

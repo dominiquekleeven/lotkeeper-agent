@@ -6,17 +6,6 @@ from loguru import logger
 
 from open_ah_agent.tasks.agent_task import TimeUtils
 
-WINDOW_PATTERNS = [
-    "World of Warcraft",
-    "WoW",
-    "Ascension",
-    "Turtle WoW",
-    "Project Epoch",
-    "Warmane",
-    "ChromieCraft",
-    ".*Warcraft.*",
-]
-
 
 @dataclass
 class WindowInfo:
@@ -25,6 +14,8 @@ class WindowInfo:
 
 
 class XDO:
+    """XDO is a wrapper around xdotool, a tool for interacting with the X11 window system."""
+
     @staticmethod
     def run_xdotool(*args: str) -> bool:
         try:
@@ -43,7 +34,7 @@ class XDO:
 
     class Window:
         @staticmethod
-        def wait(window_patterns: list[str] = WINDOW_PATTERNS, timeout: int = 60) -> tuple[bool, WindowInfo]:
+        def wait(window_patterns: list[str], timeout: int = 60) -> tuple[bool, WindowInfo]:
             start_time = time.time()
             while time.time() - start_time < timeout:
                 for pattern in window_patterns:
@@ -78,7 +69,7 @@ class XDO:
             return False, WindowInfo(title="", id="")
 
         @staticmethod
-        def focus(window_patterns: list[str] = WINDOW_PATTERNS) -> bool:
+        def focus(window_patterns: list[str]) -> bool:
             for pattern in window_patterns:
                 try:
                     result = subprocess.run(

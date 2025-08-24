@@ -3,7 +3,7 @@ from datetime import datetime
 from http import HTTPStatus
 
 import cv2
-import numpy as np
+import numpy
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from loguru import logger
 
@@ -42,7 +42,7 @@ class DiscordLogger:
 
         embed = DiscordEmbed(title=title, description=message, color=color)
 
-        embed.set_footer(text=f"🤖 OpenAH Agent  •  {self._format_timestamp()}")
+        embed.set_footer(text=f"OpenAH Agent  •  {self._format_timestamp()}")
 
         if level.lower() in ["success", "error"]:
             embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/916750808889917440.png")  # Robot emoji
@@ -55,7 +55,9 @@ class DiscordLogger:
             return False
 
         try:
-            webhook = DiscordWebhook(url=self.webhook_url)
+            webhook = DiscordWebhook(
+                url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL
+            )
             embed = self._format_embed(message, level, title)
             webhook.add_embed(embed)
             response = webhook.execute()
@@ -81,44 +83,63 @@ class DiscordLogger:
         return self.send_log(message, "info", title)
 
     def agent_running_tasks(self, agent_name: str, tasks: list[str]) -> bool:
-        title = f"🏁 `{agent_name}` has started running tasks"
+        title = f"`{agent_name}` Started Running Tasks"
         tasks_str = ", ".join(f"`{task}`" for task in tasks)
-        enhanced_message = f"The following tasks will be executed: {tasks_str}"
+        enhanced_message = f"**Task List:** {tasks_str}"
         return self.send_log(enhanced_message, "info", title)
 
-    def agent_task_failed(self, agent_name: str, task_name: str, error_details: str = "") -> bool:
-        title = f"❌ `{agent_name}` has failed to complete `{task_name}`"
-        enhanced_message = f"`{task_name}` has failed to complete."
+    def agent_error(self, agent_name: str, error_details: str = "") -> bool:
+        title = f"`{agent_name}` Encountered an Error"
+        enhanced_message = "The agent encountered an unexpected error."
         if error_details:
             enhanced_message += f"\n\n**Error Details:** `{error_details}`"
         return self.send_log(enhanced_message, "error", title)
 
-    def agent_all_tasks_completed(self, agent_name: str) -> bool:
-        title = f"🏁 `{agent_name}` has completed all assigned operations"
-        enhanced_message = "All tasks have been executed successfully."
+    def agent_task_failed(self, agent_name: str, task_name: str, error_details: str = "") -> bool:
+        title = f"`{agent_name}` Failed to Complete `{task_name}`"
+        enhanced_message = "The task failed to complete successfully."
+        if error_details:
+            enhanced_message += f"\n\n**Error Details:** `{error_details}`"
+        return self.send_log(enhanced_message, "error", title)
+
+    def agent_task_started(self, agent_name: str, task_name: str) -> bool:
+        title = f"`{agent_name}` Started `{task_name}`"
+        enhanced_message = "The task has been initiated and is now running."
+        return self.send_log(enhanced_message, "info", title)
+
+    def agent_task_completed(self, agent_name: str, task_name: str, duration: float) -> bool:
+        title = f"`{agent_name}` Completed `{task_name}`"
+        enhanced_message = f"The task completed successfully in **{duration} seconds**."
         return self.send_log(enhanced_message, "success", title)
 
-    def ocr_success(self, snapshot: np.ndarray, keywords: list[str]) -> bool:
-        title = "📸 OCR Success Snapshot"
+    def agent_all_tasks_completed(self, agent_name: str, duration: float) -> bool:
+        title = f"`{agent_name}` Completed All Tasks"
+        enhanced_message = f"All tasks have been completed successfully in **{duration} seconds**."
+        return self.send_log(enhanced_message, "success", title)
+
+    def ocr_success(self, snapshot: numpy.ndarray, keywords: list[str]) -> bool:
+        title = "🔎 OCR Detection Success"
         keywords_str = ", ".join(f"`{kw}`" for kw in keywords)
         enhanced_message = f"Text detection operation completed successfully.\n\n**Target Keywords:** {keywords_str}"
         return self.send_snapshot(snapshot, enhanced_message, title, "success")
 
-    def ocr_timeout(self, snapshot: np.ndarray, keywords: list[str], timeout_duration: float = 30.0) -> bool:
-        title = "⏰ OCR Timeout Snapshot"
+    def ocr_timeout(self, snapshot: numpy.ndarray, keywords: list[str], timeout_duration: float) -> bool:
+        title = "⌛️ OCR Timeout"
         keywords_str = ", ".join(f"`{kw}`" for kw in keywords)
-        enhanced_message = f"Text detection operation exceeded timeout threshold.\n\n**Target Keywords:** {keywords_str}\n**Timeout Duration:** `{timeout_duration}s`"
+        enhanced_message = f"Text detection operation exceeded the timeout threshold.\n\n**Target Keywords:** {keywords_str}\n**Timeout Duration:** `{timeout_duration}s`"
         return self.send_snapshot(snapshot, enhanced_message, title, "error")
 
     def send_snapshot(
-        self, snapshot: np.ndarray, message: str | None = None, title: str | None = None, level: str = "error"
+        self, snapshot: numpy.ndarray, message: str | None = None, title: str | None = None, level: str = "error"
     ) -> bool:
         if not self._is_enabled():
-            logger.debug("Discord logging disabled. Would send screenshot: {message}")
+            logger.debug(f"Discord logging disabled. Would send screenshot: {message}")
             return False
 
         try:
-            webhook = DiscordWebhook(url=self.webhook_url)
+            webhook = DiscordWebhook(
+                url=self.webhook_url, username=ENV.AGENT_NAME, avatar_url=ENV.AGENT_IMAGE_URL
+            )
 
             rgb_image = cv2.cvtColor(snapshot, cv2.COLOR_BGR2RGB)
 
@@ -139,7 +160,7 @@ class DiscordLogger:
                 embed_title = title or "Snapshot"
                 embed = DiscordEmbed(title=embed_title, description=message or "", color=color)
                 embed.set_image(url="attachment://snapshot.png")
-                embed.set_footer(text=f"🤖 OpenAH Agent  •  {self._format_timestamp()}")
+                embed.set_footer(text=f"OpenAH Agent  •  {self._format_timestamp()}")
 
                 webhook.add_embed(embed)
 
