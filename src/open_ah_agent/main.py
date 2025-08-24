@@ -15,6 +15,10 @@ if __name__ == "__main__":
         logger.error("WOW_USERNAME or WOW_PASSWORD not set in config")
         sys.exit(1)
 
+    if not ENV.WOW_SERVER or not ENV.WOW_REALM:
+        logger.error("WOW_SERVER or WOW_REALM not set in config")
+        sys.exit(1)
+
     # 2 Is the WoW executable available?
     wow_path = XDOGame.Paths.get_wow_executable_path()
     if not wow_path:

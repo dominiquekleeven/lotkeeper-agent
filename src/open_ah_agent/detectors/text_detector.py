@@ -13,14 +13,21 @@ from open_ah_agent.common.discord_logger import discord_logger
 
 # Game text constants
 class GameTexts:
-    CHARACTER = "Character"
+    # Misc strings
+    NEW_CHARACTER = "New Character"
     CHOOSE_SEARCH_CRITERIA = "Choose search criteria"
     LOGIN = "Login"
     TRADE = "Trade"
+    DELETE = "Delete"
+    LFG_CHANNEL = "LookingForGroup"
+
+    # State related
+    DISCONNECTED = "Disconnected"
+
+    # Addon related
     OAS_IDLE = "OAS IDLE"
     OAS_SCANNING = "OAS SCANNING"
     OAS_COMPLETED = "OAS COMPLETED"
-    DISCONNECTED = "Disconnected"
 
 
 @dataclass

@@ -5,8 +5,8 @@
 services:
   wowbox:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: ../../
+      dockerfile: deployment/docker/Dockerfile
     platform: linux/amd64
     container_name: wowbox
     # Configure environment
@@ -30,6 +30,8 @@ services:
       # Set these in the environment or in the .env file
       - WOW_USERNAME=${WOW_USERNAME:-}
       - WOW_PASSWORD=${WOW_PASSWORD:-}
+      - WOW_SERVER=${WOW_SERVER:-}
+      - WOW_REALM=${WOW_REALM:-}
       - AGENT_MODE=${AGENT_MODE:-MANUAL}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
       - AGENT_NAME=${AGENT_NAME:-}

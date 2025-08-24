@@ -95,43 +95,43 @@ class DiscordLogger:
 
     def agent_task_failed(self, agent_name: str, task_name: str, error_details: str = "") -> bool:
         title = f"`{agent_name}` Failed to Complete `{task_name}`"
-        enhanced_message = "The task failed to complete successfully."
+        enhanced_message = "The task failed to complete. Agent will now stop."
         if error_details:
             enhanced_message += f"\n\n**Error Details:** `{error_details}`"
         return self.send_log(enhanced_message, "error", title)
 
     def agent_task_started(self, agent_name: str, task_name: str) -> bool:
         title = f"`{agent_name}` Started `{task_name}`"
-        enhanced_message = "The task has been initiated and is now running."
+        enhanced_message = "The task is now running."
         return self.send_log(enhanced_message, "info", title)
 
     def agent_task_completed(self, agent_name: str, task_name: str, duration: float) -> bool:
         title = f"`{agent_name}` Completed `{task_name}`"
-        enhanced_message = f"The task completed successfully in **{duration} seconds**."
+        enhanced_message = f"The task completed in **{duration} seconds**."
         return self.send_log(enhanced_message, "success", title)
 
     def agent_all_tasks_completed(self, agent_name: str, duration: float) -> bool:
         title = f"`{agent_name}` Completed All Tasks"
-        enhanced_message = f"All tasks have been completed successfully in **{duration} seconds**."
+        enhanced_message = f"All tasks completed in **{duration} seconds**."
         return self.send_log(enhanced_message, "success", title)
 
     def ocr_success(self, snapshot: numpy.ndarray, keywords: list[str]) -> bool:
         title = "🔎 OCR Detection Success"
         keywords_str = ", ".join(f"`{kw}`" for kw in keywords)
-        enhanced_message = f"Text detection operation completed successfully.\n\n**Target Keywords:** {keywords_str}"
+        enhanced_message = f"Text detection completed successfully.\n\n**Target Keywords:** {keywords_str}"
         return self.send_snapshot(snapshot, enhanced_message, title, "success")
 
     def ocr_timeout(self, snapshot: numpy.ndarray, keywords: list[str], timeout_duration: float) -> bool:
         title = "⌛️ OCR Timeout"
         keywords_str = ", ".join(f"`{kw}`" for kw in keywords)
-        enhanced_message = f"Text detection operation exceeded the timeout threshold.\n\n**Target Keywords:** {keywords_str}\n**Timeout Duration:** `{timeout_duration}s`"
+        enhanced_message = f"Text detection timed out after {timeout_duration}s.\n\n**Target Keywords:** {keywords_str}"
         return self.send_snapshot(snapshot, enhanced_message, title, "error")
 
     def send_snapshot(
         self, snapshot: numpy.ndarray, message: str | None = None, title: str | None = None, level: str = "error"
     ) -> bool:
         if not self._is_enabled():
-            logger.debug(f"Discord logging disabled. Would send screenshot: {message}")
+            logger.debug(f"Discord logging disabled. Would send: {message}")
             return False
 
         try:

@@ -51,14 +51,19 @@ class LoginTask(AgentTask):
         logger.info("Step: Submit details")
         XDO.Interact.press_key("Return")
 
-        # 7 Wait for Enter World text to be detected
+        # 7 Wait for New Character text to be detected
         logger.info("Step: Wait for character selection screen")
-        if not self.text_detector.detect([GameTexts.CHARACTER]):
+        if not self.text_detector.detect([GameTexts.NEW_CHARACTER]):
             raise TaskError(self.name, "Failed to detect whether we are on the character selection screen")
 
         # 8 Press Enter to enter the world
         logger.info("Step: Enter world")
         XDO.Interact.press_key("Return")
+
+        # 8 Wait for the trade or LFG channel text to be detected, meaning we are actually in-game
+        logger.info("Step: Detect in-game screen")
+        if not self.text_detector.detect([GameTexts.TRADE, GameTexts.LFG_CHANNEL]):
+            raise TaskError(self.name, "Failed to detect whether we are in-game")
 
         # 9 Return success
         return True

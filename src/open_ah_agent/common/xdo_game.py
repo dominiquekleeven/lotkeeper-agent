@@ -1,8 +1,10 @@
 import os
 import subprocess
 from pathlib import Path
+from typing import Any
 
 from loguru import logger
+import lupa
 
 from open_ah_agent.common.xdo import XDO
 from open_ah_agent.config import ENV
@@ -87,6 +89,35 @@ class XDOGame:
                 return None
 
             return saved_variables_path
+
+        @staticmethod
+        def parse_saved_variables_lua(saved_variables_path: Path, variable_name: str) -> Any:
+            """Parse a WoW SavedVariables.lua file and return the given variable as a Python dict/list."""
+            lua = lupa.LuaRuntime(unpack_returned_tuples=True)
+
+            # Load file contents
+            with open(saved_variables_path, "r", encoding="utf-8") as f:
+                lua_code = f.read()
+
+            # Execute Lua code (defines the global tables)
+            lua.execute(lua_code)
+
+            # Get the specific saved variable (e.g., "MyAddonDB")
+            lua_table = lua.globals()[variable_name]
+
+            # Convert Lua table to Python recursively
+            def lua_to_python(obj: Any) -> Any:
+                if lupa.lua_type(obj) == "table":
+                    # Decide list vs dict
+                    keys = list(obj.keys())
+                    if all(isinstance(k, (int, float)) for k in keys):
+                        return [lua_to_python(obj[k]) for k in sorted(keys)]
+                    else:
+                        return {k: lua_to_python(v) for k, v in obj.items()}
+                else:
+                    return obj
+
+            return lua_to_python(lua_table)
 
     class Process:
         """Process related operations"""

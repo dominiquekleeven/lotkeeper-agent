@@ -25,6 +25,8 @@ class AppEnvironment(BaseSettings):
     # --- Credentials ---
     WOW_USERNAME: str = ""
     WOW_PASSWORD: str = ""
+    WOW_SERVER: str = ""
+    WOW_REALM: str = ""
 
     # --- Discord ---
     DISCORD_WEBHOOK_URL: str = ""

@@ -226,6 +226,25 @@ wheels = [
 ]
 
 [[package]]
+name = "lupa"
+version = "2.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/51/4e20b597795b58f840289042d87d65f0e33cdc73653a4c1c7026346e1725/lupa-2.5.tar.gz", hash = "sha256:69c6a89f2b7b08a3040d7ed2a1eeccba37a31ddc92fa199339c53a2ae3c48c34", size = 7235982, upload-time = "2025-06-15T15:31:51.745Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/82/e535e181d751cbd0cc8465c0c3f8f162d8cd69ba075c9916912b6a7c5830/lupa-2.5-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:61f09dbb8af779d78f90d71811798710a29b455c6948ea51365eefc0ab142a0d", size = 897899, upload-time = "2025-06-15T15:30:17.572Z" },
+    { url = "https://files.pythonhosted.org/packages/17/9f/2b16dfd4bea0effa256e51b446a543c1d95b059bd7217a671c8b3c0adec5/lupa-2.5-cp313-cp313-macosx_11_0_universal2.whl", hash = "sha256:e372577ac3b54a4d13d43e43de2111ad48b6fabb8f7545f40bcd989e6c13b128", size = 1841869, upload-time = "2025-06-15T15:30:19.635Z" },
+    { url = "https://files.pythonhosted.org/packages/19/34/c0219eaf75e60777973a1bc317483f6569b7e662e8c0295cf667dfa39ef1/lupa-2.5-cp313-cp313-macosx_11_0_x86_64.whl", hash = "sha256:671c7c38197a2d11040bb0e05593063ee62b29a67c982dda688bb2ef30b81670", size = 965235, upload-time = "2025-06-15T15:30:21.93Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/a7/54df82f921088ba125a48d1cb74778200013ec3814f5d45a63e92832405c/lupa-2.5-cp313-cp313-manylinux2010_i686.manylinux2014_i686.manylinux_2_12_i686.manylinux_2_17_i686.whl", hash = "sha256:5cfbbec4cb74ad70b5d1747de1537095e21cb57ca70d2a6186738322d82cf917", size = 1120634, upload-time = "2025-06-15T15:30:24.454Z" },
+    { url = "https://files.pythonhosted.org/packages/94/72/31e52086abcc34e1787ecbf7b913c039551dd42f8fa9610ae0f64bc36fb0/lupa-2.5-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:867430dde43c8cf463cd72d03b07a9158f2bee79bbdae08b0fb1e6e32982853e", size = 1037562, upload-time = "2025-06-15T15:30:26.535Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/31/96305ed6e702f9b22859c4422aa258d33f005546b8198b954bcb6c2294c9/lupa-2.5-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4326c120ae18de3fed09ea37be792a568a8433c7f3e01e0c7e32f883d98fc5a5", size = 2072701, upload-time = "2025-06-15T15:30:28.925Z" },
+    { url = "https://files.pythonhosted.org/packages/37/9b/6440cde2f09b83c42ed3c6f121d0b8b9cf39f539960226600c8f72e2556f/lupa-2.5-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:78308d2ea41e2fae47659fe671725d5346d61d9d894d22b36e427f259b5a0cf1", size = 1057425, upload-time = "2025-06-15T15:30:30.988Z" },
+    { url = "https://files.pythonhosted.org/packages/37/f4/9f5fb25df939408bac4b088c1ca42c96fb1606ac40aa1c6c28cc9f43e585/lupa-2.5-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:5a9c12e74faaea60ae50a6d2670eb7e7cfc0b036045912bb37a15753a702fc28", size = 1172440, upload-time = "2025-06-15T15:30:33.147Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/3a/adebc756f088416c276359978a982a00b755aa3f23def7f7f6ec1d023105/lupa-2.5-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:2a848ed378fbfcf735780116265bd2e68600691efefb4f7ff326a4ac089189d5", size = 2166142, upload-time = "2025-06-15T15:30:35.232Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/8a/fedac88be2af4bdf7e981d9eecfb2defe612004a22fb745978f68d9ddbee/lupa-2.5-cp313-cp313-win32.whl", hash = "sha256:1ea65fb8046bf2c7cf39dfb3677ce5e25d5ea1330e7f9bce9b274fcdf55db29b", size = 1422328, upload-time = "2025-06-15T15:30:37.057Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/38/9572b19463ee5aebcb4a503dee7d9f908179ee1b80e6dfc21300b156ee04/lupa-2.5-cp313-cp313-win_amd64.whl", hash = "sha256:e8d52999947d3d09c1dd2cf572cfb90a0ced3185f702e75f4b1a3ba4276b3c97", size = 1694135, upload-time = "2025-06-15T15:30:38.944Z" },
+]
+
+[[package]]
 name = "mss"
 version = "10.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -329,6 +348,7 @@ dependencies = [
     { name = "discord-webhook" },
     { name = "httpx" },
     { name = "loguru" },
+    { name = "lupa" },
     { name = "mss" },
     { name = "numpy" },
     { name = "opencv-python" },
@@ -352,6 +372,7 @@ requires-dist = [
     { name = "discord-webhook", specifier = ">=1.3.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "lupa", specifier = ">=2.5" },
     { name = "mss", specifier = ">=10.1.0" },
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },

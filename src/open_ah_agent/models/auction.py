@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel, Field
 
 
@@ -11,6 +12,20 @@ class Auction(BaseModel):
     item_buyout_price: int = Field(description="The buyout price of the auction in copper", gt=0)
     item_starting_bid_price: int = Field(description="The starting bid price of the auction in copper", gt=0)
     item_quantity: int = Field(description="The quantity of the item being auctioned", gt=0)
+
+    @classmethod
+    def from_lua_table(cls, data: dict[str, Any]) -> "Auction":
+        return Auction(
+            seller=data["seller"],
+            item_id=data["itemId"],
+            item_name=data["name"],
+            item_icon=data["texture"],
+            item_level=data["level"],
+            item_quality=data["quality"],
+            item_buyout_price=data["buyoutPrice"],
+            item_starting_bid_price=data["minBid"],
+            item_quantity=data["count"],
+        )
 
 
 class AuctionData(BaseModel):

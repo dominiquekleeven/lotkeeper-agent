@@ -1,5 +1,6 @@
 from open_ah_agent.agents.wow_agent import WoWAgent
 from open_ah_agent.tasks.login_task import LoginTask
+from open_ah_agent.tasks.parse_test_task import ParseTestTask
 from open_ah_agent.tasks.scan_auctions_task import ScanAuctionsTask
 from open_ah_agent.tasks.target_interact_creature_task import TargetInteractCreatureTask
 
@@ -15,5 +16,10 @@ class AuctionHouseAgent(WoWAgent):
 
     def __init__(self) -> None:
         super().__init__("Auction House Agent")
-        tasks = [LoginTask(), TargetInteractCreatureTask(AuctioneerNames.AUCTIONEER_FITCH), ScanAuctionsTask()]
+        tasks = [
+            ParseTestTask(),
+            LoginTask(),
+            TargetInteractCreatureTask(AuctioneerNames.AUCTIONEER_FITCH),
+            ScanAuctionsTask(),
+        ]
         self.add_tasks(tasks)
