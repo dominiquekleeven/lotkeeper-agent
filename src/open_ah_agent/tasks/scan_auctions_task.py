@@ -96,7 +96,7 @@ class ScanAuctionsTask(AgentTask):
             response.raise_for_status()
             logger.info("Successfully sent auction data to the OpenAH API")
             discord_logger.info(
-                f"Successfully sent {len(auctions)} auctions to theOpenAH API", "Scan Auction House Update"
+                f"Successfully sent {len(auctions)} auctions to the OpenAH API", "Scan Auction House Update"
             )
 
         except Exception as e:
