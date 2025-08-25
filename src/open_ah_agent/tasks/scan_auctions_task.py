@@ -1,11 +1,13 @@
+import httpx
 from loguru import logger
 
 from open_ah_agent.common.discord_logger import discord_logger
 from open_ah_agent.common.xdo_game import XDOGame
+from open_ah_agent.config import ENV
 from open_ah_agent.dependencies import text_detector
 from open_ah_agent.detectors.text_detector import GameTexts
-from open_ah_agent.models.auction import Auction
-from open_ah_agent.tasks.agent_task import AgentTask, TaskError
+from open_ah_agent.models.auction import Auction, AuctionData
+from open_ah_agent.tasks.agent_task import AgentTask, TaskError, TimeUtils
 
 
 class ScanAuctionsTask(AgentTask):
@@ -36,7 +38,10 @@ class ScanAuctionsTask(AgentTask):
             raise TaskError(self.name, "Failed to detect whether the scan is complete")
 
         # 5 Reload game window to ensure saved variables are stored
+        logger.info("Step: Reloading game window to ensure saved variables are stored")
         XDOGame.Game.reload()
+        TimeUtils.fixed_delay(10)
+
 
         # 6 Wait for the game to be ready
         logger.info("Step: Waiting for game to be ready after reload")
@@ -66,7 +71,37 @@ class ScanAuctionsTask(AgentTask):
             f"Successfully parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update"
         )
 
-        # 9 Send the auctions to the OpenAH API
-        # TODO: Implement
+        # 9 Check if we can attempt to send the auctions to the OpenAH API
+        logger.info("Step: Checking if we can send auctions to OpenAH API")
+        if not ENV.OAH_HOST or not ENV.OAH_AGENT_TOKEN:
+            raise TaskError(self.name, "OpenAH Host or Agent Token not set in config, cannot send auction data")
 
+        # 10 Constructing auction data payload
+        logger.info("Step: Constructing auction data payload")
+        auction_data = AuctionData(
+            server=ENV.WOW_SERVER,
+            realm=ENV.WOW_REALM,
+            auctions=auctions,
+        )
+
+        # 11 Send auction data to OpenAH API
+        logger.info("Step: Sending auction data to OpenAH API")
+        try:
+            endpoint = f"{ENV.OAH_HOST}/api/v1/agent/auctions"
+            headers = {
+                "X-Agent-Access-Token": f"{ENV.OAH_AGENT_TOKEN}",
+                "Content-Type": "application/json",
+            }
+            response = httpx.post(endpoint, json=auction_data.model_dump(), headers=headers, timeout=60)
+            response.raise_for_status()
+            logger.info("Successfully sent auction data to the OpenAH API")
+            discord_logger.info(
+                f"Successfully sent {len(auctions)} auctions to theOpenAH API", "Scan Auction House Update"
+            )
+
+        except Exception as e:
+            logger.exception(f"Failed to send auction data to the OpenAH API: {e}")
+            raise TaskError(self.name, f"Failed to send auction data to the OpenAH API: {e}") from e
+
+        # 12 Return success
         return True

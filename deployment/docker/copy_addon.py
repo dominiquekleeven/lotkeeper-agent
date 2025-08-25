@@ -159,8 +159,17 @@ def main() -> None:
         if docker_source_path.startswith("C:"):
             docker_source_path = "/c" + docker_source_path[2:]
 
-        print(f"📂 Copying {addon}...")
-        copy_cmd = f'docker run --rm -v client_data:/data -v "{docker_source_path}:/source" alpine sh -c "cp -r /source /data/Interface/AddOns/"'
+        print(f"📂 Copying {addon}... (from {docker_source_path} to /data/Interface/AddOns/{addon})")
+        
+        # First create the addon directory
+        mkdir_cmd = f'docker run --rm -v client_data:/data alpine sh -c "mkdir -p /data/Interface/AddOns/{addon}"'
+        stdout, stderr = run_docker_command(mkdir_cmd)
+        if stdout is None:
+            print(f"❌ Error: Failed to create directory for addon {addon}")
+            sys.exit(1)
+        
+        # Then copy the addon files
+        copy_cmd = f'docker run --rm -v client_data:/data -v "{docker_source_path}:/source" alpine sh -c "cp -r /source/* /data/Interface/AddOns/{addon}/"'
 
         stdout, stderr = run_docker_command(copy_cmd)
         if stdout is None:
@@ -168,6 +177,22 @@ def main() -> None:
             sys.exit(1)
         else:
             print(f"✅ {addon} copied successfully")
+            
+            # Show the contents of the copied addon directory
+            print(f"📁 Contents of /data/Interface/AddOns/{addon}/:")
+            ls_cmd = f'docker run --rm -v client_data:/data alpine sh -c "ls -la /data/Interface/AddOns/{addon}/"'
+            stdout, stderr = run_docker_command(ls_cmd)
+            if stdout:
+                print(stdout)
+            
+            # Show the .toc file contents if it exists
+            toc_cmd = f'docker run --rm -v client_data:/data alpine sh -c "cat /data/Interface/AddOns/{addon}/*.toc"'
+            stdout, stderr = run_docker_command(toc_cmd)
+            if stdout:
+                print(f"📄 {addon}.toc contents:")
+                print(stdout)
+            else:
+                print(f"⚠️  No .toc file found for {addon}")
 
     # Verify the copy
     print("\n✅ Verifying addon installation...")

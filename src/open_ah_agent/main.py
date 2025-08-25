@@ -3,11 +3,12 @@ import sys
 from loguru import logger
 
 from open_ah_agent.agents.auction_house_agent import AuctionHouseAgent
+from open_ah_agent.common.app_info import get_app_info
 from open_ah_agent.common.xdo_game import XDOGame
 from open_ah_agent.config import ENV, AgentMode
 
 if __name__ == "__main__":
-    logger.info("===== OpenAH Agent =====")
+    logger.info(f"===== OpenAH Agent v{get_app_info().version} =====")
 
     # Quick pre-checks
     # 1 Are we configured properly?

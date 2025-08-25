@@ -4,7 +4,7 @@ local OAS = OpenAuctionScanner
 -- ============================================================================
 -- CONSTANTS AND CONFIGURATION
 -- ============================================================================
-local VERSION = "1.0.0"
+local VERSION = "1.0.1"
 
 OAAData = OAAData or {}
 
@@ -299,6 +299,7 @@ local function OnAuctionItemListUpdate()
                 buyoutPrice = buyoutPrice,
                 bidAmount = bidAmount,
                 link = link,
+                classIndex = state.currentClassNameIndex,
                 className = state.currentClassName,
             })
         end

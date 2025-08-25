@@ -1,5 +1,4 @@
 import io
-from datetime import datetime
 from http import HTTPStatus
 
 import cv2
@@ -7,6 +6,7 @@ import numpy
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from loguru import logger
 
+from open_ah_agent.common.app_info import get_app_info
 from open_ah_agent.config import ENV
 
 
@@ -30,9 +30,6 @@ class DiscordLogger:
             "game": 0xE67E22,  # Orange
         }
 
-    def _format_timestamp(self) -> str:
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     def _format_embed(self, message: str, level: str, title: str | None = None) -> DiscordEmbed:
         colors = self._get_enhanced_colors()
         color = colors.get(level.lower(), colors["info"])
@@ -42,7 +39,8 @@ class DiscordLogger:
 
         embed = DiscordEmbed(title=title, description=message, color=color)
 
-        embed.set_footer(text=f"OpenAH Agent  •  {self._format_timestamp()}")
+        embed.set_footer(text=f"OpenAH Agent v{get_app_info().version}")
+        embed.set_timestamp()
 
         if level.lower() in ["success", "error"]:
             embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/916750808889917440.png")  # Robot emoji
@@ -88,26 +86,26 @@ class DiscordLogger:
 
     def agent_error(self, agent_name: str, error_details: str = "") -> bool:
         title = f"`{agent_name}` Encountered an Error"
-        enhanced_message = "The agent encountered an unexpected error."
+        enhanced_message = "Agent encountered an unexpected error."
         if error_details:
             enhanced_message += f"\n\n**Error Details:** `{error_details}`"
         return self.send_log(enhanced_message, "error", title)
 
     def agent_task_failed(self, agent_name: str, task_name: str, error_details: str = "") -> bool:
         title = f"`{agent_name}` Failed to Complete `{task_name}`"
-        enhanced_message = "The task failed to complete. Agent will now stop."
+        enhanced_message = "Task failed to complete. Agent will now stop."
         if error_details:
             enhanced_message += f"\n\n**Error Details:** `{error_details}`"
         return self.send_log(enhanced_message, "error", title)
 
     def agent_task_started(self, agent_name: str, task_name: str) -> bool:
         title = f"`{agent_name}` Started `{task_name}`"
-        enhanced_message = "The task is now running."
+        enhanced_message = "Task is now running."
         return self.send_log(enhanced_message, "info", title)
 
     def agent_task_completed(self, agent_name: str, task_name: str, duration: float) -> bool:
         title = f"`{agent_name}` Completed `{task_name}`"
-        enhanced_message = f"The task completed in **{duration} seconds**."
+        enhanced_message = f"Task completed in **{duration} seconds**."
         return self.send_log(enhanced_message, "success", title)
 
     def agent_all_tasks_completed(self, agent_name: str, duration: float) -> bool:
@@ -156,7 +154,8 @@ class DiscordLogger:
                 embed_title = title or "Snapshot"
                 embed = DiscordEmbed(title=embed_title, description=message or "", color=color)
                 embed.set_image(url="attachment://snapshot.png")
-                embed.set_footer(text=f"OpenAH Agent  •  {self._format_timestamp()}")
+                embed.set_footer(text=f"OpenAH Agent v{get_app_info().version}")
+                embed.set_timestamp()
 
                 webhook.add_embed(embed)
 

@@ -19,13 +19,18 @@ services:
       - LP_NUM_THREADS=2
       - WINEESYNC=1
       - WINEFSYNC=1
+      # ---- OpenAH Agent Environment Variables ----
+      - AGENT_MODE=${AGENT_MODE:?must be set}
+      - OAH_AGENT_TOKEN=${OAH_AGENT_TOKEN:?must be set}
+      - OAH_HOST=http://host.docker.internal:8007
+      # ---- WoW Environment Variables ----
       - WOW_EXE=${WOW_EXE:?must be set}
-      - VNC_PASSWORD=${VNC_PASSWORD:?must be set}
       - WOW_USERNAME=${WOW_USERNAME:?must be set}
       - WOW_PASSWORD=${WOW_PASSWORD:?must be set}
       - WOW_SERVER=${WOW_SERVER:?must be set}
       - WOW_REALM=${WOW_REALM:?must be set}
-      - AGENT_MODE=${AGENT_MODE:-MANUAL}
+      # ---- Discord Logging Environment Variables ----
+      - VNC_PASSWORD=${VNC_PASSWORD:?must be set}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:?must be set}
       - AGENT_NAME=${AGENT_NAME:?must be set}
       - AGENT_IMAGE_URL=${AGENT_IMAGE_URL:?must be set}
@@ -48,6 +53,7 @@ services:
     image: grafana/promtail:2.9.8
     command: -config.file=/etc/promtail/config.yml -config.expand-env=true
     environment:
+      # ---- Loki Logging Environment Variables ----
       - LOKI_URL=${LOKI_URL}
     volumes:
       - ./promtail-config.yml:/etc/promtail/config.yml:ro

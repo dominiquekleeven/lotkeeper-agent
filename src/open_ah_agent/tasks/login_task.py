@@ -51,6 +51,13 @@ class LoginTask(AgentTask):
         logger.info("Step: Submit details")
         XDO.Interact.press_key("Return")
 
+
+
+        # Todo:
+        # Improve robustness by checking for edge cases, like:
+        # - Disconnected message
+        # - Realm Selection screen instead of character selection screen
+
         # 7 Wait for New Character text to be detected
         logger.info("Step: Wait for character selection screen")
         if not self.text_detector.detect([GameTexts.NEW_CHARACTER]):

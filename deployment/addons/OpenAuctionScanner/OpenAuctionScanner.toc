@@ -2,7 +2,7 @@
 ## Title: Open Auction Scanner
 ## Notes: Scans and analyzes auction house data
 ## Author: Your Name
-## Version: 1.0.0
+## Version: 1.0.1
 ## SavedVariables: OAAData
 
 OpenAuctionScanner.lua

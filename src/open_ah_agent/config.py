@@ -2,8 +2,6 @@ from enum import Enum
 
 from pydantic_settings import BaseSettings
 
-DEFAULT_AGENT_TOKEN = "1234567890"
-
 
 class AgentMode(Enum):
     MANUAL = "MANUAL"
@@ -14,7 +12,8 @@ class AppEnvironment(BaseSettings):
     """Application environment settings."""
 
     # --- Agent ---
-    OAH_AGENT_TOKEN: str = DEFAULT_AGENT_TOKEN
+    OAH_AGENT_TOKEN: str = ""
+    OAH_HOST: str = ""
 
     AGENT_NAME: str = "OpenAH Agent"
     AGENT_IMAGE_URL: str = "https://i.imgur.com/77FVlal.jpeg"
