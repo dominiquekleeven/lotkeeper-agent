@@ -26,6 +26,10 @@ if __name__ == "__main__":
         logger.error("Failed to find WoW executable, exiting")
         sys.exit(1)
 
+    # 3 Set default WTF variables (realm and UI scale)
+    XDOGame.Paths.set_wtf_variable(XDOGame.Paths.WTFVariables.REALM_NAME, ENV.WOW_REALM)
+    XDOGame.Paths.set_wtf_variable(XDOGame.Paths.WTFVariables.UI_SCALE, "1.0")
+
     match ENV.AGENT_MODE:
         # Manual mode is used for configuration and debugging
         case AgentMode.MANUAL:

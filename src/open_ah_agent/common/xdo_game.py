@@ -1,5 +1,7 @@
 import os
+import re
 import subprocess
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +47,10 @@ class XDOGame:
 
     class Paths:
         """Path related operations"""
+
+        class WTFVariables(Enum):
+            REALM_NAME = "realmName"
+            UI_SCALE = "uiScale"
 
         @staticmethod
         def get_data_dir() -> Path:
@@ -118,6 +124,55 @@ class XDOGame:
                     return obj
 
             return lua_to_python(lua_table)
+
+        @staticmethod
+        def get_wtf_config_path() -> Path | None:
+            """Get the path to the WTF config"""
+            data_dir = XDOGame.Paths.get_data_dir()
+            wtf_config_path = data_dir / "WTF" / "Config.wtf"
+            return wtf_config_path
+
+        @staticmethod
+        def set_wtf_variable(variable: WTFVariables, value: str) -> None:
+            """
+            Set any variable in the WTF config
+
+            Args:
+                variable: The variable to set
+                value: The value to set the variable to
+
+            Returns:
+                True if the variable was set, False otherwise
+            """
+            variable_name = variable.value
+            wtf_config_path = XDOGame.Paths.get_wtf_config_path()
+            if not wtf_config_path:
+                logger.error("Failed to find WTF config, exiting")
+                raise FileNotFoundError("Failed to find WTF config")
+
+            with open(wtf_config_path, encoding="utf-8") as f:
+                config_content = f.read()
+
+            # Create the variable line
+            variable_line = f'SET {variable_name} "{value}"'
+
+            # Check if variable already exists
+            if f'SET {variable_name} "' in config_content:
+                pattern = rf'SET {re.escape(variable_name)} "[^"]*"'
+                config_content = re.sub(pattern, variable_line, config_content)
+                logger.info(f"Updating existing {variable_name} to: {value}")
+            else:
+                config_content = config_content.rstrip() + "\n" + variable_line + "\n"
+                logger.info(f"Adding new {variable_name}: {value}")
+
+            # Write the updated config back to file
+            try:
+                with open(wtf_config_path, "w", encoding="utf-8") as f:
+                    f.write(config_content)
+                logger.info(f"Updated WTF config with {variable_name}: {value}")
+            except Exception as e:
+                logger.exception(f"Failed to write WTF config: {e}")
+                raise
 
     class Process:
         """Process related operations"""

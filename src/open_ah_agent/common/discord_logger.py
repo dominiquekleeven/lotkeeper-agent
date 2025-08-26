@@ -116,7 +116,7 @@ class DiscordLogger:
     def ocr_success(self, snapshot: numpy.ndarray, keywords: list[str]) -> bool:
         title = "🔎 OCR Detection Success"
         keywords_str = ", ".join(f"`{kw}`" for kw in keywords)
-        enhanced_message = f"Text detection completed successfully.\n\n**Target Keywords:** {keywords_str}"
+        enhanced_message = f"Text detection completed.\n\n**Target Keywords:** {keywords_str}"
         return self.send_snapshot(snapshot, enhanced_message, title, "success")
 
     def ocr_timeout(self, snapshot: numpy.ndarray, keywords: list[str], timeout_duration: float) -> bool:
@@ -162,7 +162,7 @@ class DiscordLogger:
             response = webhook.execute()
 
             if response.status_code == HTTPStatus.OK:
-                logger.debug("Discord snapshot sent successfully")
+                logger.debug("Discord snapshot sent")
                 return True
             else:
                 logger.error(f"Failed to send Discord snapshot. Status: {response.status_code}")

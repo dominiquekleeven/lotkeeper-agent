@@ -160,14 +160,14 @@ def main() -> None:
             docker_source_path = "/c" + docker_source_path[2:]
 
         print(f"📂 Copying {addon}... (from {docker_source_path} to /data/Interface/AddOns/{addon})")
-        
+
         # First create the addon directory
         mkdir_cmd = f'docker run --rm -v client_data:/data alpine sh -c "mkdir -p /data/Interface/AddOns/{addon}"'
         stdout, stderr = run_docker_command(mkdir_cmd)
         if stdout is None:
             print(f"❌ Error: Failed to create directory for addon {addon}")
             sys.exit(1)
-        
+
         # Then copy the addon files
         copy_cmd = f'docker run --rm -v client_data:/data -v "{docker_source_path}:/source" alpine sh -c "cp -r /source/* /data/Interface/AddOns/{addon}/"'
 
@@ -176,15 +176,15 @@ def main() -> None:
             print(f"❌ Error: Failed to copy addon {addon}")
             sys.exit(1)
         else:
-            print(f"✅ {addon} copied successfully")
-            
+            print(f"✅ {addon} copied")
+
             # Show the contents of the copied addon directory
             print(f"📁 Contents of /data/Interface/AddOns/{addon}/:")
             ls_cmd = f'docker run --rm -v client_data:/data alpine sh -c "ls -la /data/Interface/AddOns/{addon}/"'
             stdout, stderr = run_docker_command(ls_cmd)
             if stdout:
                 print(stdout)
-            
+
             # Show the .toc file contents if it exists
             toc_cmd = f'docker run --rm -v client_data:/data alpine sh -c "cat /data/Interface/AddOns/{addon}/*.toc"'
             stdout, stderr = run_docker_command(toc_cmd)
@@ -213,14 +213,14 @@ def main() -> None:
                 addon_name = Path(toc).parent.name
                 installed_addons.append(addon_name)
 
-        print(f"\n🎮 Successfully installed {len(installed_addons)} addon(s):")
+        print(f"\n🎮 Installed {len(installed_addons)} addon(s):")
         for addon_name in installed_addons:
             if addon_name in selected_addons:
                 print(f"  ✅ {addon_name}")
             else:
                 print(f"  📁 {addon_name} (existing)")
 
-    print(f"\n🎉 {len(selected_addons)} addon(s) copy completed successfully!")
+    print(f"\n🎉 {len(selected_addons)} addon(s) copy completed!")
     print("\nYour selected addons are now available in the WoW client running in Docker.")
     print("Start your wowbox container and the addons should be loaded automatically.")
 

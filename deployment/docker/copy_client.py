@@ -231,7 +231,7 @@ Examples:
         size = stdout.strip().split()[0]
         print(f"\n💾 Total size: {size}")
 
-    print(f"\n🎉 Client '{client_name}' copy completed successfully!")
+    print(f"\n🎉 Client '{client_name}' copy completed!")
     print("\nYour WoW client is now available in the Docker volume.")
     print("Start your wowbox container and it should find the client automatically.")
     print("\nMake sure your WOW_EXE environment variable matches one of the executables found above.")

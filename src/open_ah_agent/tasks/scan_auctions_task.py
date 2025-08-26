@@ -42,7 +42,6 @@ class ScanAuctionsTask(AgentTask):
         XDOGame.Game.reload()
         TimeUtils.fixed_delay(10)
 
-
         # 6 Wait for the game to be ready
         logger.info("Step: Waiting for game to be ready after reload")
         if not self.text_detector.detect([GameTexts.OAS_IDLE]):
@@ -60,15 +59,15 @@ class ScanAuctionsTask(AgentTask):
         logger.info("Step: Parsing saved variables file")
         try:
             table_entries = XDOGame.Paths.parse_saved_variables_lua(saved_variables_path, "OAAData")
-            logger.info(f"Successfully parsed auction data with {len(table_entries)} entries")
+            logger.info(f"Parsed auction data with {len(table_entries)} entries")
             auctions = [Auction.from_lua_table(entry) for entry in table_entries]
-            logger.info(f"Successfully mapped {len(auctions)} auctions")
+            logger.info(f"Mapped {len(auctions)} auctions")
         except Exception as e:
             logger.exception(f"Failed to parse saved variables file: {e}")
             raise TaskError(self.name, f"Failed to parse saved variables file: {e}") from e
 
         discord_logger.info(
-            f"Successfully parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update"
+            f"Parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update"
         )
 
         # 9 Check if we can attempt to send the auctions to the OpenAH API
@@ -94,9 +93,9 @@ class ScanAuctionsTask(AgentTask):
             }
             response = httpx.post(endpoint, json=auction_data.model_dump(), headers=headers, timeout=60)
             response.raise_for_status()
-            logger.info("Successfully sent auction data to the OpenAH API")
+            logger.info("Sent auction data to the OpenAH API")
             discord_logger.info(
-                f"Successfully sent {len(auctions)} auctions to the OpenAH API", "Scan Auction House Update"
+                f"Sent {len(auctions)} auctions to the OpenAH API", "Scan Auction House Update"
             )
 
         except Exception as e:

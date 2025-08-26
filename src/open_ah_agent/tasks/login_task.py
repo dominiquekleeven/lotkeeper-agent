@@ -51,8 +51,6 @@ class LoginTask(AgentTask):
         logger.info("Step: Submit details")
         XDO.Interact.press_key("Return")
 
-
-
         # Todo:
         # Improve robustness by checking for edge cases, like:
         # - Disconnected message

@@ -38,11 +38,11 @@ scrape_configs:
       # Parse Loguru-style prefix:
       # 2025-08-24 18:02:36.039 | INFO     | open_...:... - <message>
       - regex:
-          expression: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+\|\s+(?P<level>[A-Z]+)\s+\|\s+(?P<logger>[^:]+):(?P<message>.*)$'
+          expression: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)\s+\|\s+(?P<level>[A-Z]+)\s+\|\s+(?P<logger>[^|]+?)\s*-\s*(?P<message>.*)$'
 
-      # Promote the parsed level to a Loki label
       - labels:
           level:
+          logger:
 
       # Keep only the message text as the log line content
       - output:
