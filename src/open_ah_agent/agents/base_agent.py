@@ -25,9 +25,11 @@ class BaseAgent(ABC):
     Base Agent, provides a base class for all agents.
     """
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, interval_hours: int = 1, max_retries: int = 3) -> None:
         self.name = name
         self.display = os.environ.get("DISPLAY", ":99")
+        self.interval_hours = interval_hours
+        self.max_retries = max_retries
         self.time_between_tasks = 10.0
         self._tasks: list[AgentTask] = []
         self.window_process: subprocess.Popen[bytes] | None = None
@@ -38,6 +40,9 @@ class BaseAgent(ABC):
     def add_tasks(self, tasks: list[AgentTask]) -> None:
         for task in tasks:
             self.add_task(task)
+
+    def get_task_names(self) -> list[str]:
+        return [task.name for task in self._tasks]
 
     @abstractmethod
     def setup(self) -> None:
@@ -50,26 +55,18 @@ class BaseAgent(ABC):
     def start(self) -> None:
         """Start the agent"""
         try:
+            # Ensure display is set for the current thread context
+            self.display = os.environ.get("DISPLAY", ":99")
             self.setup()
             self._run()
         except TaskError as e:
-            logger.error(f"A task error occurred while running tasks: {e}")
-            discord_logger.agent_task_failed(self.name, e.task_name, str(e))
+            raise e
         except Exception as e:
-            logger.exception(f"An unexpected error occurred while running tasks: {e}")
-            discord_logger.agent_error(self.name, str(e))
+            raise e
         finally:
             self.teardown()
 
     def _run(self) -> None:
-        task_names = [task.name for task in self._tasks]
-        joined_tasks = ", ".join(task_names)
-
-        logger.info(f"Agent {self.name} will execute tasks: {joined_tasks}")
-        discord_logger.agent_running_tasks(self.name, task_names)
-
-        # Run all configured tasks
-        agent_start_time = time.time()  # Agent start time
         for task in self._tasks:
             logger.info(f"Executing task: {task.name} in {self.time_between_tasks} seconds")
 
@@ -90,11 +87,3 @@ class BaseAgent(ABC):
 
             # Notify discord that the task has completed
             discord_logger.agent_task_completed(self.name, task.name, task_duration)
-
-        # Time the agent
-        agent_end_time = time.time()
-        agent_duration = round(agent_end_time - agent_start_time, 2)
-        logger.info(f"Agent {self.name} completed all tasks in {agent_duration} seconds")
-
-        # Notify discord once all tasks are completed
-        discord_logger.agent_all_tasks_completed(self.name, agent_duration)

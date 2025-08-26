@@ -66,9 +66,7 @@ class ScanAuctionsTask(AgentTask):
             logger.exception(f"Failed to parse saved variables file: {e}")
             raise TaskError(self.name, f"Failed to parse saved variables file: {e}") from e
 
-        discord_logger.info(
-            f"Parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update"
-        )
+        discord_logger.info(f"Parsed and mapped a total of {len(auctions)} auctions", "Scan Auction House Update")
 
         # 9 Check if we can attempt to send the auctions to the OpenAH API
         logger.info("Step: Checking if we can send auctions to OpenAH API")
@@ -94,9 +92,7 @@ class ScanAuctionsTask(AgentTask):
             response = httpx.post(endpoint, json=auction_data.model_dump(), headers=headers, timeout=60)
             response.raise_for_status()
             logger.info("Sent auction data to the OpenAH API")
-            discord_logger.info(
-                f"Sent {len(auctions)} auctions to the OpenAH API", "Scan Auction House Update"
-            )
+            discord_logger.info(f"Sent {len(auctions)} auctions to the OpenAH API", "Scan Auction House Update")
 
         except Exception as e:
             logger.exception(f"Failed to send auction data to the OpenAH API: {e}")

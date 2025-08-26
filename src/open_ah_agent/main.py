@@ -1,4 +1,5 @@
 import sys
+import time
 
 from loguru import logger
 
@@ -6,8 +7,12 @@ from open_ah_agent.agents.auction_house_agent import AuctionHouseAgent
 from open_ah_agent.common.app_info import get_app_info
 from open_ah_agent.common.xdo_game import XDOGame
 from open_ah_agent.config import ENV, AgentMode
+from open_ah_agent.scheduler import AgentScheduler
+
+
 
 if __name__ == "__main__":
+    logger.level("INFO")
     logger.info(f"===== OpenAH Agent v{get_app_info().version} =====")
 
     # Quick pre-checks
@@ -46,8 +51,20 @@ if __name__ == "__main__":
 
         # Auto mode is used to automatically run all configured tasks
         case AgentMode.AUTO:
-            logger.info("Auto running agent tasks...")
-            auction_house_agent = AuctionHouseAgent()
-            auction_house_agent.start()
+            logger.info("Starting agent scheduler...")
+            scheduler = AgentScheduler()
+            scheduler.start()
 
-            logger.info("All agents have completed their tasks")
+            # Auction House Agent
+            scheduler.add_agent(AuctionHouseAgent(), run_immediately=True)
+
+            logger.info("Agent scheduler is running. Press Ctrl+C to stop.")
+
+            # Keep main thread alive while scheduler runs in background
+            try:
+                while scheduler.is_running():
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logger.info("Shutting down agent scheduler...")
+                scheduler.stop()
+                logger.info("Agent scheduler stopped")

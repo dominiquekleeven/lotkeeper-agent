@@ -2,8 +2,6 @@ import random
 import time
 from abc import ABC, abstractmethod
 
-from loguru import logger
-
 # Sensible defaults
 TYPING_DELAY: tuple[float, float] = (0.05, 0.15)
 KEY_DELAY: tuple[float, float] = (0.3, 0.5)
@@ -60,7 +58,5 @@ class AgentTask(ABC):
 
     def execute(self) -> bool:
         """Execute the task"""
-        logger.info(f"Executing task: {self.name}")
         result = self.run()
-        logger.info(f"Completed task: {self.name}, success: {result}")
         return result

@@ -3,10 +3,11 @@ from dataclasses import dataclass
 from typing import Any, cast
 
 import cv2
-import mss
 import numpy
 import pytesseract
 from loguru import logger
+from PIL import Image
+from Xlib import X, display
 
 from open_ah_agent.common.discord_logger import discord_logger
 
@@ -52,7 +53,7 @@ class TextDetector:
             "height": height,
         }
         self.fps: int = fps
-        self.screenshotter = mss.mss()
+        self.x11_display = display.Display()  # Initialize X11 display connection
 
     def set_capture_box(self, left: int, top: int, width: int, height: int) -> None:
         logger.info(f"OCR: Setting capture box to {left}, {top}, {width}, {height}")
@@ -62,8 +63,33 @@ class TextDetector:
         self.capture_box["height"] = height
 
     def _snap(self) -> numpy.ndarray:
-        img = numpy.array(self.screenshotter.grab(self.capture_box))[:, :, :3]
-        return img
+        try:
+            # Get the root window
+            root = self.x11_display.screen().root
+
+            # Take screenshot using X11
+            raw_image = root.get_image(
+                self.capture_box["left"],
+                self.capture_box["top"],
+                self.capture_box["width"],
+                self.capture_box["height"],
+                X.ZPixmap,
+                0xFFFFFFFF,
+            )
+
+            # Convert X11 image data to PIL Image
+            pil_image = Image.frombytes(
+                "RGB", (self.capture_box["width"], self.capture_box["height"]), raw_image.data, "raw", "BGRX"
+            )
+
+            # Convert PIL to numpy array (OpenCV format)
+            img = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
+            return img
+
+        except Exception as e:
+            logger.error(f"Failed to capture screenshot: {e}")
+            # Fallback: create a black image
+            return numpy.zeros((self.capture_box["height"], self.capture_box["width"], 3), dtype=numpy.uint8)
 
     def _preprocess_image(self, img_bgr: numpy.ndarray) -> numpy.ndarray:
         """Preprocess image for OCR - shared between _ocr and _ocr_data methods."""
