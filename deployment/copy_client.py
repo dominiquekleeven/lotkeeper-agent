@@ -73,7 +73,7 @@ Examples:
 
     parser.add_argument("--list", "-l", action="store_true", help="List available client directories")
     parser.add_argument("--force", "-f", action="store_true", help="Force overwrite existing data in volume")
-    parser.add_argument("--clients-dir", type=Path, help="Custom path to clients directory (default: ./data/clients)")
+    parser.add_argument("--clients-dir", type=Path, help="Custom path to clients directory (default: ./clients)")
 
     args = parser.parse_args()
 
@@ -82,7 +82,7 @@ Examples:
         clients_dir = args.clients_dir
     else:
         script_dir = Path(__file__).parent
-        clients_dir = script_dir / "data" / "clients"
+        clients_dir = script_dir / "clients"
 
     print("WoW Client Copy Script")
     print("=" * 50)

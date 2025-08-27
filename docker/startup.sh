@@ -8,29 +8,9 @@ sleep 1
 fluxbox -rc /dev/null &
 sleep 1
 
-# Set up VNC password if provided, otherwise use no password (local access only)
-VNC_ARGS="-display :99 -forever -shared -rfbport 5900 -noxdamage -noxfixes -nowf -noscr -threads"
-if [ -n "$VNC_PASSWORD" ]; then
-    echo "Setting up VNC with password protection..."
-    mkdir -p /home/wineuser/.vnc
-    
-    x11vnc -storepasswd "$VNC_PASSWORD" /home/wineuser/.vnc/passwd
-    
-    if [ -f "/home/wineuser/.vnc/passwd" ] && [ -s "/home/wineuser/.vnc/passwd" ]; then
-        chown wineuser:wineuser /home/wineuser/.vnc/passwd
-        chmod 600 /home/wineuser/.vnc/passwd
-        VNC_ARGS="$VNC_ARGS -rfbauth /home/wineuser/.vnc/passwd"
-        echo "VNC password protection enabled"
-        echo "Password file created:"
-        ls -la /home/wineuser/.vnc/passwd
-    else
-        echo "Failed to create password file, using no password"
-        VNC_ARGS="$VNC_ARGS -nopw"
-    fi
-else
-    echo "VNC running without password (local access only)"
-    VNC_ARGS="$VNC_ARGS -nopw"
-fi
+# VNC runs without password - security is handled by SSH tunneling
+VNC_ARGS="-display :99 -forever -shared -rfbport 5900 -noxdamage -noxfixes -nowf -noscr -threads -nopw"
+echo "VNC can be accessed via SSH tunneling at localhost:5900 or noVNC at localhost:6080"
 
 x11vnc $VNC_ARGS &
 sleep 1

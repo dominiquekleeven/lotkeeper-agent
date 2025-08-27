@@ -12,25 +12,29 @@ scrape_configs:
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 10s
+        filters:
+          - name: network
+            values: ["wowbox-network"]
+          - name: label
+            values: ["logging=promtail"]
 
     relabel_configs:
-      # Only scrape containers you explicitly label
       - source_labels: [__meta_docker_container_label_logging]
         regex: promtail
         action: keep
 
-      # Always have at least one label (avoids 400 from Loki)
       - target_label: job
         replacement: wowbox
 
-      # Agent label from container
       - source_labels: [__meta_docker_container_label_agent]
         target_label: agent
 
-      # Container name (without leading slash) — handy for debugging
       - source_labels: [__meta_docker_container_name]
         regex: '/(.*)'
         target_label: container
+
+      - target_label: source
+        replacement: docker
 
     pipeline_stages:
       - docker: {}

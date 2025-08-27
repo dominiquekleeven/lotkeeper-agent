@@ -30,30 +30,27 @@ services:
       - WOW_SERVER=${WOW_SERVER:?must be set}
       - WOW_REALM=${WOW_REALM:?must be set}
       # ---- Discord Logging Environment Variables ----
-      - VNC_PASSWORD=${VNC_PASSWORD:?must be set}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:?must be set}
       - AGENT_NAME=${AGENT_NAME:?must be set}
       - AGENT_IMAGE_URL=${AGENT_IMAGE_URL:?must be set}
     labels:
-    - logging=promtail
-    - agent=${AGENT_NAME:?must be set}
+      - logging=promtail
+      - agent=${AGENT_NAME:?must be set}
     volumes:
       - client_data:/data:rw
       - /dev/shm:/dev/shm
-    ports:
-      - "5901:5900"
-      - "6081:6080"
     shm_size: "1gb"
-    mem_limit: "4g"
+    mem_limit: "3g"
     cpus: "2"
     restart: unless-stopped
     command: /startup.sh
+    networks:
+      - wowbox-network
 
   promtail:
     image: grafana/promtail:2.9.8
     command: -config.file=/etc/promtail/config.yml -config.expand-env=true
     environment:
-      # ---- Loki Logging Environment Variables ----
       - LOKI_URL=${LOKI_URL}
     volumes:
       - ./promtail-config.yml:/etc/promtail/config.yml:ro
@@ -61,8 +58,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /tmp:/tmp
     restart: unless-stopped
+    networks:
+      - wowbox-network
 
-
+# Workaround for windows permission issues with mounted host directories
+# use copy_client.py and copy_addon.py to create the volume, move the client and the addons to the volume
 volumes:
   client_data:
     external: true
+
+networks:
+  wowbox-network:
+    driver: bridge

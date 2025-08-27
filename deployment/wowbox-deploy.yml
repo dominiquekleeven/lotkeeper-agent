@@ -6,8 +6,17 @@ services:
       file: wowbox.yml
       service: wowbox
     image: registry.kbnet.systems/kbnet/openah-agent:main
+    environment:
+      - CLIENT_DIR=${CLIENT_DIR:?must be set}
+    volumes:
+      - ./clients/${CLIENT_DIR}:/data:rw
+      - /dev/shm:/dev/shm
 
   promtail:
     extends:
       file: wowbox.yml
       service: promtail
+
+networks:
+  wowbox-network:
+    driver: bridge

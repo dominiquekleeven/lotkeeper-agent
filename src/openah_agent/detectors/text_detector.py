@@ -303,7 +303,7 @@ class TextDetector:
     def detect(
         self,
         keywords: list[str],
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         min_conf: int = 70,
         whitelist: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
     ) -> bool:
@@ -334,7 +334,7 @@ class TextDetector:
     def detect_absence(
         self,
         keywords: list[str],
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         min_conf: int = 70,
         whitelist: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
     ) -> bool:
@@ -356,7 +356,7 @@ class TextDetector:
     def _detect(
         self,
         keywords: list[str],
-        timeout: float = 30.0,
+        timeout: float = 60.0,
         min_conf: int = 70,
         whitelist: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ",
     ) -> DetectionResult:
