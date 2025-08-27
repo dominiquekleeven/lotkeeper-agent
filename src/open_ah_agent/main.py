@@ -1,7 +1,10 @@
 import sys
 import time
 
+# Configure logger globally
 from loguru import logger
+logger.remove()
+logger.add(sys.stderr, level="INFO")
 
 from open_ah_agent.agents.auction_house_agent import AuctionHouseAgent
 from open_ah_agent.common.app_info import get_app_info
@@ -12,7 +15,6 @@ from open_ah_agent.scheduler import AgentScheduler
 
 
 if __name__ == "__main__":
-    logger.level("INFO")
     logger.info(f"===== OpenAH Agent v{get_app_info().version} =====")
 
     # Quick pre-checks
