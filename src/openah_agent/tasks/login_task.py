@@ -67,7 +67,7 @@ class LoginTask(AgentTask):
 
         # 8 Wait for the trade or LFG channel text to be detected, meaning we are actually in-game
         logger.info("Step: Detect in-game screen")
-        if not self.text_detector.detect([GameTexts.TRADE, GameTexts.LFG_CHANNEL]):
+        if not self.text_detector.detect([GameTexts.TRADE, GameTexts.LFG_CHANNEL], timeout=120): # extra long timeout due to gameload
             raise TaskError(self.name, "Failed to detect whether we are in-game")
 
         # 9 Return success
