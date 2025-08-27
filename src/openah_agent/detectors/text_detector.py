@@ -42,8 +42,8 @@ class TextDetector:
         self,
         left: int = 0,
         top: int = 0,
-        width: int = 800,
-        height: int = 600,
+        width: int = 1024,
+        height: int = 768,
         fps: int = 2,
     ) -> None:
         self.capture_box: dict[str, int] = {

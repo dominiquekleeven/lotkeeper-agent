@@ -2,7 +2,7 @@
 
 echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor >/dev/null 2>&1 || true
 
-Xvfb :99 -screen 0 800x600x24 -ac +extension GLX +render -noreset -nolisten tcp -dpi 96 +extension DAMAGE -fbdir /dev/shm -maxclients 256 &
+Xvfb :99 -screen 0 1024x768x24 -ac +extension GLX +render -noreset -nolisten tcp -dpi 96 +extension DAMAGE -fbdir /dev/shm -maxclients 256 &
 sleep 1
 
 fluxbox -rc /dev/null &
