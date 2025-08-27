@@ -292,10 +292,6 @@ local function OnAuctionItemListUpdate()
             
             local realm = GetRealmName()
 
-            -- debug maxstack and vendorprice
-            oas_print("Max stack: " .. (maxStack or "nil"))
-            oas_print("Vendor price: " .. (vendorPrice or "nil"))
-
             -- We dont store canUse, highestBidder
             table.insert(TEMP_OAAData, {
                 realm = realm,

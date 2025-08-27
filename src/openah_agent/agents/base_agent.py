@@ -25,12 +25,13 @@ class BaseAgent(ABC):
     Base Agent, provides a base class for all agents.
     """
 
-    def __init__(self, name: str, interval_hours: int = 1, max_retries: int = 3) -> None:
+    # TODO: Use cron for interval
+    def __init__(self, name: str, interval_hours: int = 1, max_retries: int = 1, time_between_tasks: float = 10.0) -> None:
         self.name = name
         self.display = os.environ.get("DISPLAY", ":99")
         self.interval_hours = interval_hours
         self.max_retries = max_retries
-        self.time_between_tasks = 10.0
+        self.time_between_tasks = time_between_tasks
         self._tasks: list[AgentTask] = []
         self.window_process: subprocess.Popen[bytes] | None = None
 
