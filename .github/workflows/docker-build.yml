@@ -43,7 +43,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        images: ${{ env.REGISTRY }}/${{ secrets.GITEA_USERNAME }}/${{ env.IMAGE_NAME }}
         tags: |
           ${{ github.event_name == 'workflow_dispatch' && inputs.custom_tag != '' && format('type=raw,value={0}', inputs.custom_tag) || '' }}
           type=ref,event=branch
