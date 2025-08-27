@@ -37,7 +37,7 @@ jobs:
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ secrets.GITEA_USERNAME }}
-        password: ${{ secrets.GITEA_PASSWORD }}
+        password: ${{ secrets.GITEA_TOKEN }}
 
     - name: Extract metadata
       id: meta
