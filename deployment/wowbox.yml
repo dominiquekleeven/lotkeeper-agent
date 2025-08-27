@@ -1,8 +1,8 @@
 services:
   wowbox:
     build:
-      context: ../../
-      dockerfile: deployment/docker/Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
     platform: linux/amd64
     environment:
       - WINEDEBUG=-all

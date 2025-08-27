@@ -83,17 +83,16 @@ def select_addons_interactive(available_addons: list[str]) -> list[str] | None:
 
 
 def main() -> None:
-    # Get the project root directory (parent of docker folder)
+    # Get the addons directory (in the same directory as this script)
     script_dir = Path(__file__).parent
-    deployment_root = script_dir.parent
-    addons_path = deployment_root / "addons"
+    addons_path = script_dir / "addons"
 
     # Convert to absolute path for Docker volume mounting
     addons_absolute = addons_path.resolve()
 
     print("WoW Addon Copy Script")
     print("=" * 50)
-    print(f"Deployment root: {deployment_root}")
+    print(f"Deployment directory: {script_dir}")
     print(f"Addons source: {addons_absolute}")
 
     # Check if addons directory exists

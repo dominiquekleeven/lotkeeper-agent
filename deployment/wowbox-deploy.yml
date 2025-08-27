@@ -1,0 +1,13 @@
+# extends wowbox.yml
+# uses image from registry.kbnet.systems/kbnet/openah-agent:main rather than building locally
+services:
+  wowbox:
+    extends:
+      file: wowbox.yml
+      service: wowbox
+    image: registry.kbnet.systems/kbnet/openah-agent:main
+
+  promtail:
+    extends:
+      file: wowbox.yml
+      service: promtail

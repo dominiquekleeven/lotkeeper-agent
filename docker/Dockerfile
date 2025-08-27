@@ -62,7 +62,7 @@ WORKDIR /app
 RUN chown -R 1010:1010 /app
 
 # Copy and make the startup script executable
-COPY deployment/docker/startup.sh /startup.sh
+COPY docker/startup.sh /startup.sh
 RUN chmod +x /startup.sh
 
 # Set back to data directory as working directory

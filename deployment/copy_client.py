@@ -82,8 +82,7 @@ Examples:
         clients_dir = args.clients_dir
     else:
         script_dir = Path(__file__).parent
-        project_root = script_dir.parent
-        clients_dir = project_root / "data" / "clients"
+        clients_dir = script_dir / "data" / "clients"
 
     print("WoW Client Copy Script")
     print("=" * 50)
