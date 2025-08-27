@@ -357,7 +357,7 @@ local function Scan()
         OnAuctionItemListUpdate()
     end)
 
-    state.currentClassNameIndex = 6 -- Weapon is the first class
+    state.currentClassNameIndex = 1
     state.currentClassName = TARGET_CLASS_NAMES[state.currentClassNameIndex]
     OAS:UpdateStatus()
     QueryAuctions(state.currentClassName, state.currentPage)
