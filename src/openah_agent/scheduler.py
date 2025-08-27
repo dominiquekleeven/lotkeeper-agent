@@ -24,10 +24,10 @@ from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 from loguru import logger
 
-from open_ah_agent.agents.base_agent import AgentError, BaseAgent
-from open_ah_agent.common.discord_logger import discord_logger
-from open_ah_agent.common.logging import propagate_logs
-from open_ah_agent.tasks.agent_task import TaskError
+from openah_agent.agents.base_agent import AgentError, BaseAgent
+from openah_agent.common.discord_logger import discord_logger
+from openah_agent.common.logging import propagate_logs
+from openah_agent.tasks.agent_task import TaskError
 
 TIME_BETWEEN_RETRIES = 300
 

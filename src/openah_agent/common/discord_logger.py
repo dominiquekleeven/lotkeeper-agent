@@ -7,8 +7,8 @@ import numpy
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from loguru import logger
 
-from open_ah_agent.common.app_info import get_app_info
-from open_ah_agent.config import ENV
+from openah_agent.common.app_info import get_app_info
+from openah_agent.config import ENV
 
 
 class DiscordLogger:

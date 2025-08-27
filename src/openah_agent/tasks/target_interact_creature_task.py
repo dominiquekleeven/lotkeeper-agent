@@ -1,10 +1,10 @@
 from loguru import logger
 
-from open_ah_agent.common.xdo import XDO
-from open_ah_agent.common.xdo_game import XDOGame
-from open_ah_agent.dependencies import text_detector
-from open_ah_agent.detectors.text_detector import GameTexts
-from open_ah_agent.tasks.agent_task import AgentTask, TaskError, TimeUtils
+from openah_agent.common.xdo import XDO
+from openah_agent.common.xdo_game import XDOGame
+from openah_agent.dependencies import text_detector
+from openah_agent.detectors.text_detector import GameTexts
+from openah_agent.tasks.agent_task import AgentTask, TaskError, TimeUtils
 
 
 class TargetInteractCreatureTask(AgentTask):

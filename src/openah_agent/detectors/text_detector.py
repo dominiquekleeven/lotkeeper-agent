@@ -9,7 +9,7 @@ from loguru import logger
 from PIL import Image
 from Xlib import X, display
 
-from open_ah_agent.common.discord_logger import discord_logger
+from openah_agent.common.discord_logger import discord_logger
 
 
 # Game text constants

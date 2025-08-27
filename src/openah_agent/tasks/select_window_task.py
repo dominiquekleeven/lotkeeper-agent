@@ -1,7 +1,7 @@
 from loguru import logger
 
-from open_ah_agent.common.xdo import XDO
-from open_ah_agent.tasks.agent_task import AgentTask, TaskError
+from openah_agent.common.xdo import XDO
+from openah_agent.tasks.agent_task import AgentTask, TaskError
 
 
 class SelectWindowTask(AgentTask):

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from loguru import logger
 
-from open_ah_agent.tasks.agent_task import TimeUtils
+from openah_agent.tasks.agent_task import TimeUtils
 
 
 @dataclass

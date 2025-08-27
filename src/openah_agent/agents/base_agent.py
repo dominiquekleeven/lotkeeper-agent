@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 
 from loguru import logger
 
-from open_ah_agent.common.discord_logger import discord_logger
-from open_ah_agent.tasks.agent_task import AgentTask, TaskError, TimeUtils
+from openah_agent.common.discord_logger import discord_logger
+from openah_agent.tasks.agent_task import AgentTask, TaskError, TimeUtils
 
 
 class AgentError(Exception):

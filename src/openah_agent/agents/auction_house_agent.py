@@ -1,7 +1,7 @@
-from open_ah_agent.agents.wow_agent import WoWAgent
-from open_ah_agent.tasks.login_task import LoginTask
-from open_ah_agent.tasks.scan_auctions_task import ScanAuctionsTask
-from open_ah_agent.tasks.target_interact_creature_task import TargetInteractCreatureTask
+from openah_agent.agents.wow_agent import WoWAgent
+from openah_agent.tasks.login_task import LoginTask
+from openah_agent.tasks.scan_auctions_task import ScanAuctionsTask
+from openah_agent.tasks.target_interact_creature_task import TargetInteractCreatureTask
 
 
 class AuctioneerNames:

@@ -1,8 +1,8 @@
 from loguru import logger
 
-from open_ah_agent.agents.base_agent import AgentError, BaseAgent
-from open_ah_agent.common.xdo_game import XDOGame
-from open_ah_agent.tasks.select_window_task import SelectWindowTask
+from openah_agent.agents.base_agent import AgentError, BaseAgent
+from openah_agent.common.xdo_game import XDOGame
+from openah_agent.tasks.select_window_task import SelectWindowTask
 
 WOW_WINDOW_PATTERNS = [
     "World of Warcraft",

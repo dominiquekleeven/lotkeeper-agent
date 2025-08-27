@@ -51,7 +51,7 @@ fi
 cd /app
 echo "Syncing Python dependencies..."
 ~/.local/bin/uv sync
-echo "Starting open-ah-agent (which will start WoW)..."
-~/.local/bin/uv run python -m open_ah_agent.main
+echo "Starting openah-agent (which will start WoW)..."
+~/.local/bin/uv run python -m openah_agent.main
 
 wait

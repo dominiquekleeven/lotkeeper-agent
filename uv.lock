@@ -344,7 +344,7 @@ wheels = [
 ]
 
 [[package]]
-name = "open-ah-agent"
+name = "openah-agent"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
