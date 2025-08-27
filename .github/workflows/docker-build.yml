@@ -15,7 +15,7 @@ on:
 
 env:
   REGISTRY: registry.kbnet.systems
-  IMAGE_NAME: open-ah-agent
+  IMAGE_NAME: openah-agent
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
