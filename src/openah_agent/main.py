@@ -53,9 +53,16 @@ if __name__ == "__main__":
             scheduler = AgentScheduler()
             scheduler.start()
 
-            # Auction House Agent
-            scheduler.add_agent(AuctionHouseAgent(), run_immediately=True)
+            # Define agents
+            auction_house_agent = (
+                AuctionHouseAgent()
+                .with_interval_hours(1)
+                .with_max_retries(1)
+                .with_time_between_tasks(10.0)
+            )
 
+            # Add agents
+            scheduler.add_agent(auction_house_agent, run_immediately=True)
             logger.info("Agent scheduler is running. Press Ctrl+C to stop.")
 
             # Keep main thread alive while scheduler runs in background

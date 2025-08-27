@@ -15,9 +15,8 @@ class AuctionHouseAgent(WoWAgent):
 
     def __init__(self) -> None:
         super().__init__("Auction House Agent")
-        tasks = [
+        self.add_tasks([
             LoginTask(),
             TargetInteractCreatureTask(AuctioneerNames.AUCTIONEER_FITCH),
             ScanAuctionsTask(),
-        ]
-        self.add_tasks(tasks)
+        ])

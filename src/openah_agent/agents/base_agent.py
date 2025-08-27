@@ -20,27 +20,103 @@ class AgentError(Exception):
         return f"{self.agent_name}: {self.message}"
 
 
+INTERVAL_HOURS = 1  # TODO: Use cron for interval
+MAX_RETRIES = 1
+TIME_BETWEEN_TASKS = 10.0
+
 class BaseAgent(ABC):
     """
     Base Agent, provides a base class for all agents.
+
+    Args:
+        name: The name of the agent
+
+    Use settings() for configuration
     """
 
-    # TODO: Use cron for interval
-    def __init__(self, name: str, interval_hours: int = 1, max_retries: int = 1, time_between_tasks: float = 10.0) -> None:
+    def __init__(self, name: str) -> None:
+        # Agent settings
         self.name = name
         self.display = os.environ.get("DISPLAY", ":99")
-        self.interval_hours = interval_hours
-        self.max_retries = max_retries
-        self.time_between_tasks = time_between_tasks
         self._tasks: list[AgentTask] = []
         self.window_process: subprocess.Popen[bytes] | None = None
 
-    def add_task(self, task: AgentTask) -> None:
-        self._tasks.append(task)
+        # Schedule and retry settings
+        self.interval_hours = INTERVAL_HOURS
+        self.max_retries = MAX_RETRIES
+        self.time_between_tasks = TIME_BETWEEN_TASKS
 
-    def add_tasks(self, tasks: list[AgentTask]) -> None:
+    def with_interval_hours(self, interval_hours: int) -> "BaseAgent":
+        """
+        Set the interval between agent runs in hours
+        
+        Args:
+            interval_hours: Interval between agent runs in hours (must be positive)
+            
+        Returns:
+            self for method chaining
+        """
+        if interval_hours <= 0:
+            raise ValueError("interval_hours must be positive")
+        self.interval_hours = interval_hours
+        return self
+
+    def with_max_retries(self, max_retries: int) -> "BaseAgent":
+        """
+        Set the maximum number of retries for failed operations
+        
+        Args:
+            max_retries: Maximum number of retries (must be non-negative)
+            
+        Returns:
+            self for method chaining
+        """
+        if max_retries < 0:
+            raise ValueError("max_retries must be non-negative")
+        self.max_retries = max_retries
+        return self
+
+    def with_time_between_tasks(self, time_between_tasks: float) -> "BaseAgent":
+        """
+        Set the time to wait between tasks in seconds
+        
+        Args:
+            time_between_tasks: Time to wait between tasks (must be non-negative)
+            
+        Returns:
+            self for method chaining
+        """
+        if time_between_tasks < 0:
+            raise ValueError("time_between_tasks must be non-negative")
+        self.time_between_tasks = time_between_tasks
+        return self
+
+    def add_task(self, task: AgentTask) -> "BaseAgent":
+        """
+        Add a single task to the agent
+        
+        Args:
+            task: The task to add
+            
+        Returns:
+            self for method chaining
+        """
+        self._tasks.append(task)
+        return self
+
+    def add_tasks(self, tasks: list[AgentTask]) -> "BaseAgent":
+        """
+        Add multiple tasks to the agent
+        
+        Args:
+            tasks: List of tasks to add
+            
+        Returns:
+            self for method chaining
+        """
         for task in tasks:
-            self.add_task(task)
+            self._tasks.append(task)
+        return self
 
     def get_task_names(self) -> list[str]:
         return [task.name for task in self._tasks]
@@ -56,8 +132,6 @@ class BaseAgent(ABC):
     def start(self) -> None:
         """Start the agent"""
         try:
-            # Ensure display is set for the current thread context
-            self.display = os.environ.get("DISPLAY", ":99")
             self.setup()
             self._run()
         except TaskError as e:

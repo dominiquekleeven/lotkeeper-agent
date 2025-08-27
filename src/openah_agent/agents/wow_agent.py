@@ -25,19 +25,15 @@ class WoWAgent(BaseAgent):
 
     def __init__(self, name: str) -> None:
         super().__init__(name)
-
-        # Default task to include
         self.add_task(SelectWindowTask(WOW_WINDOW_PATTERNS))
 
     def setup(self) -> None:
-        # Start the WoW process
         logger.info("Starting the WoW process")
         self.window_process = XDOGame.Process.start()
         if not self.window_process:
             raise AgentError(self.name, "Failed to start WoW, exiting")
 
     def teardown(self) -> None:
-        # Stop the WoW process
         logger.info("Stopping the WoW process")
         XDOGame.Process.cleanup(self.window_process)
         self.window_process = None
