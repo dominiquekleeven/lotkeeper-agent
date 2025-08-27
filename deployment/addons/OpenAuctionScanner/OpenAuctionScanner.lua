@@ -277,12 +277,24 @@ local function OnAuctionItemListUpdate()
         if name then
             local link = GetAuctionItemLink("list", i)
             local itemId = nil
+            local maxStack = nil
+            local vendorPrice = nil
+            
             if link then
                 local idStr = string.match(link, "item:(%d+)")
-                if idStr then itemId = tonumber(idStr) end
+                if idStr then 
+                    itemId = tonumber(idStr)
+                    local _, _, _, _, _, _, _, maxStackSize, _, _, vendorPriceValue = GetItemInfo(itemId)
+                    maxStack = maxStackSize or 1  -- Default to 1 if nil
+                    vendorPrice = vendorPriceValue or 0  -- Default to 0 if nil
+                end
             end
             
             local realm = GetRealmName()
+
+            -- debug maxstack and vendorprice
+            oas_print("Max stack: " .. (maxStack or "nil"))
+            oas_print("Vendor price: " .. (vendorPrice or "nil"))
 
             -- We dont store canUse, highestBidder
             table.insert(TEMP_OAAData, {
@@ -301,6 +313,8 @@ local function OnAuctionItemListUpdate()
                 link = link,
                 classIndex = state.currentClassNameIndex,
                 className = state.currentClassName,
+                maxStackSize = maxStack,
+                vendorPrice = vendorPrice,
             })
         end
 
@@ -347,7 +361,7 @@ local function Scan()
         OnAuctionItemListUpdate()
     end)
 
-    state.currentClassNameIndex = 1 -- Weapon is the first class
+    state.currentClassNameIndex = 6 -- Weapon is the first class
     state.currentClassName = TARGET_CLASS_NAMES[state.currentClassNameIndex]
     OAS:UpdateStatus()
     QueryAuctions(state.currentClassName, state.currentPage)

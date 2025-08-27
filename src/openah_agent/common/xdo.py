@@ -100,12 +100,7 @@ class XDO:
     class Interact:
         @staticmethod
         def type_text(text: str) -> bool:
-            for char in text:
-                TimeUtils.type_delay()
-                if not XDO.run_xdotool("type", char):
-                    return False
-
-            return True
+            return XDO.run_xdotool("type", text)
 
         @staticmethod
         def press_key(key: str) -> bool:
