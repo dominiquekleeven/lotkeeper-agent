@@ -2,6 +2,8 @@
 
 # Docker build script for OpenAH Agent (Local Development)
 # This script builds the Docker image locally for development use
+# And directly runs the docker-compose deployment in attached mode
+# Just open a new terminal if you dislike that :>
 
 set -e
 
