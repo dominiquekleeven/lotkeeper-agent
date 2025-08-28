@@ -1,8 +1,6 @@
 services:
   wowbox:
-    build:
-      context: ../
-      dockerfile: docker/Dockerfile
+    image: openah-agent:dev
     platform: linux/amd64
     environment:
       - WINEDEBUG=-all
