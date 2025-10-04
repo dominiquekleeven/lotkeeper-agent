@@ -1,0 +1,51 @@
+name: wowbox
+services:
+  lotkeeper-agent:
+    image: lotkeeper-agent:dev
+    platform: linux/amd64
+    environment:
+      WINEDEBUG: -all
+      DISPLAY: :99
+      LIBGL_ALWAYS_SOFTWARE: 1
+      GALLIUM_DRIVER: llvmpipe
+      WINEDLLOVERRIDES: mscoree,mshtml=
+      __GL_SYNC_TO_VBLANK: 0
+      MESA_NO_ERROR: 1
+      MESA_GLTHREAD: true
+      __GL_THREADED_OPTIMIZATIONS: 1
+      MESA_GL_VERSION_OVERRIDE: 4.5
+      MESA_GLSL_VERSION_OVERRIDE: 450
+      LP_NUM_THREADS: 2
+      WINEESYNC: 1
+      WINEFSYNC: 1
+      # ---- Lotkeeper Agent Environment Variables ----
+      AGENT_MODE: ${AGENT_MODE:?must be set}
+      LOT_AGENT_TOKEN: ${LOT_AGENT_TOKEN:?must be set}
+      LOT_HOST: ${LOT_HOST:?must be set}
+      # ---- WoW Environment Variables ----
+      WOW_EXE: ${WOW_EXE:?must be set}
+      WOW_SERVER: ${WOW_SERVER:?must be set}
+      # ---- Discord Logging Environment Variables ----
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:?must be set}
+      AGENT_NAME: ${AGENT_NAME:?must be set}
+      AGENT_IMAGE_URL: ${AGENT_IMAGE_URL:?must be set}
+    labels:
+      - logging=promtail
+      - agent=${AGENT_NAME:?must be set}
+    volumes:
+      - ./config:/data/config:ro
+      - client_data:/data:rw
+      - /dev/shm:/dev/shm
+    shm_size: "1gb"
+    mem_limit: "3g"
+    cpus: "2"
+    restart: unless-stopped
+    command: /startup.sh
+    ports:
+      - "127.0.0.1:6080:6080" # host loopback -> container 6080 (noVNC)
+
+# Workaround for windows permission issues with mounted host directories
+# use copy_client.py and copy_addon.py to create the volume, move the client and the addons to the volume
+volumes:
+  client_data:
+    external: true

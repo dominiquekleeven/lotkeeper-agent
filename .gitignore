@@ -1,3 +1,7 @@
-/data
+deployment/data
 **.egg-info
-**.pyc
+**/*.pyc
+# Ignore .env files but keep example.env
+**/*.env
+!**/example.env
+/deployment/clients

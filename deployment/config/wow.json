@@ -1,0 +1,23 @@
+{
+  "accounts": [
+    {
+      "username": "username",
+      "realm": "exact realm name",
+      "password": "password",
+      "faction": "crossfaction"
+    },
+    {
+      "username": "username",
+      "realm": "exact realm name",
+      "password": "password",
+      "faction": "alliance"
+    },
+    
+    {
+      "username": "username",
+      "realm": "exact realm name",
+      "password": "password",
+      "faction": "horde"
+    }
+  ]
+}

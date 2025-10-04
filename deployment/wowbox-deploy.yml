@@ -1,0 +1,14 @@
+# extends wowbox.yml
+name: wowbox
+services:
+  lotkeeper-agent:
+    extends:
+      file: wowbox.yml
+      service: lotkeeper-agent
+    image: registry.kbnet.systems/kbnet/lotkeeper-agent:main
+    environment:
+      CLIENT_DIR: ${CLIENT_DIR:?must be set}
+    volumes:
+      - ./clients/${CLIENT_DIR}:/data:rw
+      - ./config:/data/config:ro
+      - /dev/shm:/dev/shm
